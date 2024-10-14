@@ -11,9 +11,13 @@ HINSTANCE hInst;                                // instance actuelle
 WCHAR szTitle[MAX_LOADSTRING];                  // Texte de la barre de titre
 WCHAR szWindowClass[MAX_LOADSTRING];            // nom de la classe de fenêtre principale
 
+
+
 // Déclarations anticipées des fonctions incluses dans ce module de code :
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
+//New
+/////
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 
@@ -75,7 +79,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     wcex.hInstance      = hInstance;
     wcex.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_STEGANOGRAPHY));
     wcex.hCursor        = LoadCursor(nullptr, IDC_ARROW);
-    wcex.hbrBackground  = (HBRUSH)(COLOR_WINDOW+1);
+    wcex.hbrBackground  = (HBRUSH)(COLOR_WINDOW+24);
     wcex.lpszMenuName   = MAKEINTRESOURCEW(IDC_STEGANOGRAPHY);
     wcex.lpszClassName  = szWindowClass;
     wcex.hIconSm        = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
@@ -100,6 +104,36 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
       CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
 
+
+   HWND buttons[3];
+
+   struct buttonsetup
+   {
+       int s_x = 0;
+       int s_y = 0;
+       int s_width = 0;
+       int s_height = 0;
+       const char* title = " ";
+   };
+
+   buttonsetup buttonmap[3];
+   buttonmap[0] = { 20, 20, 60, 60, "Donut"};
+   buttonmap[1] = { 600, 150, 120, 60, "Beignet"};
+   buttonmap[2] = { 20, 300, 60, 60, "Croissant"};
+
+   for (int b = 0; b < 3; b++)
+   {
+       
+       buttons[b] = CreateWindowA("Button", buttonmap[b].title, WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON, buttonmap[b].s_x, buttonmap[b].s_y, buttonmap[b].s_width, buttonmap[b].s_height, hWnd, (HMENU)b, NULL, NULL);
+       
+   }
+
+   HWND entry;
+
+   entry = CreateWindowA("Edit", "Write something", WS_TABSTOP | WS_VISIBLE | WS_CHILD | WS_BORDER | WS_THICKFRAME, 240, 20, 240, 60, hWnd, NULL, NULL, NULL);
+
+   entry.
+
    if (!hWnd)
    {
       return FALSE;
@@ -109,6 +143,24 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    UpdateWindow(hWnd);
 
    return TRUE;
+}
+
+BOOL UpdateInstance(HINSTANCE hInstance, int nCmdShow)
+{
+    hInst = hInstance; // Stocke le handle d'instance dans la variable globale
+
+    HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
+        CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
+
+    if (!hWnd)
+    {
+        return FALSE;
+    }
+
+    ShowWindow(hWnd, nCmdShow);
+    UpdateWindow(hWnd);
+
+    return TRUE;
 }
 
 //
@@ -123,14 +175,22 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+
     switch (message)
     {
     case WM_COMMAND:
         {
             int wmId = LOWORD(wParam);
+
             // Analyse les sélections de menu :
             switch (wmId)
             {
+            case 1:
+                MessageBox(hWnd, L"Test", L"Test", 1);
+                break;
+            case 2:
+                MessageBox(hWnd, L"Test", L"Test", 1);
+                break;
             case IDM_ABOUT:
                 DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
                 break;
@@ -153,6 +213,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_DESTROY:
         PostQuitMessage(0);
         break;
+
+    case WM_CREATE:
+    {
+        break;
+    }
     default:
         return DefWindowProc(hWnd, message, wParam, lParam);
     }
