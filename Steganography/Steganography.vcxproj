@@ -134,6 +134,7 @@
     <ClInclude Include="InputField.h" />
     <ClInclude Include="MainWindow.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="SteganoAlgoLSB.h" />
     <ClInclude Include="Steganography.h" />
     <ClInclude Include="SteganoSystem.h" />
     <ClInclude Include="targetver.h" />
@@ -144,6 +145,7 @@
     <ClCompile Include="ImageLoader.cpp" />
     <ClCompile Include="InputField.cpp" />
     <ClCompile Include="MainWindow.cpp" />
+    <ClCompile Include="SteganoAlgoLSB.cpp" />
     <ClCompile Include="Steganography.cpp" />
     <ClCompile Include="SteganoSystem.cpp" />
   </ItemGroup>
