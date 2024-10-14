@@ -13,6 +13,18 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Fichiers d%27en-tête\UI">
+      <UniqueIdentifier>{fe11be52-00d8-434c-903c-f6990f71daec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\Steganography">
+      <UniqueIdentifier>{fbab4c51-9f06-4a1c-ae37-88122d29cb27}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\Steganography">
+      <UniqueIdentifier>{ea9562f0-5201-43e7-b0a7-f2ded996e313}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\UI">
+      <UniqueIdentifier>{d56fa176-4f2b-4c4b-9d10-75b05d59190a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -27,10 +39,46 @@
     <ClInclude Include="Steganography.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="SteganoSystem.h">
+      <Filter>Fichiers d%27en-tête\Steganography</Filter>
+    </ClInclude>
+    <ClInclude Include="ASteganoAlgo.h">
+      <Filter>Fichiers d%27en-tête\Steganography</Filter>
+    </ClInclude>
+    <ClInclude Include="Button.h">
+      <Filter>Fichiers d%27en-tête\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageLoader.h">
+      <Filter>Fichiers d%27en-tête\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="InputField.h">
+      <Filter>Fichiers d%27en-tête\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="MainWindow.h">
+      <Filter>Fichiers d%27en-tête\UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Steganography.cpp">
       <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="ASteganoAlgo.cpp">
+      <Filter>Fichiers sources\Steganography</Filter>
+    </ClCompile>
+    <ClCompile Include="SteganoSystem.cpp">
+      <Filter>Fichiers sources\Steganography</Filter>
+    </ClCompile>
+    <ClCompile Include="Button.cpp">
+      <Filter>Fichiers sources\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageLoader.cpp">
+      <Filter>Fichiers sources\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="InputField.cpp">
+      <Filter>Fichiers sources\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="MainWindow.cpp">
+      <Filter>Fichiers sources\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -45,5 +93,8 @@
     <Image Include="Steganography.ico">
       <Filter>Fichiers de ressources</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="html1.htm" />
   </ItemGroup>
 </Project>

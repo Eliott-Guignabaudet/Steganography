@@ -128,7 +128,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="ASteganoAlgo.h" />
+    <ClInclude Include="Button.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="ImageLoader.h" />
+    <ClInclude Include="InputField.h" />
+    <ClInclude Include="MainWindow.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Steganography.h" />
     <ClInclude Include="SteganoSystem.h" />
@@ -136,6 +140,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ASteganoAlgo.cpp" />
+    <ClCompile Include="Button.cpp" />
+    <ClCompile Include="ImageLoader.cpp" />
+    <ClCompile Include="InputField.cpp" />
+    <ClCompile Include="MainWindow.cpp" />
     <ClCompile Include="Steganography.cpp" />
     <ClCompile Include="SteganoSystem.cpp" />
   </ItemGroup>
