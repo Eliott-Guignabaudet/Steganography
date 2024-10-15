@@ -115,7 +115,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    // Taille X,
    // Taille Y,
    // Parent HWND,
-   // hMenu->NULL par défaut => pour assigner un numéro pour WM_Command,
+   // hMenu->NULL par défaut => assigner un numéro identifiable pour WM_Command,
    // hInstance->NULL par défaut,
    // Ip Param->NULL par défaut
    // );
@@ -124,7 +124,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    HWND l_background;
    l_background = CreateWindowA("Static", " ", WS_TABSTOP | WS_VISIBLE | WS_CHILD, 20, 250, 550, 400, hWnd, NULL, NULL, NULL);
 
-   //Texte cu message caché à gauche de l'écran
+   //Texte du message caché à gauche de l'écran
    HWND l_text;
    l_text = CreateWindowA("Static", "Message de l'image: ", WS_TABSTOP | WS_VISIBLE | WS_CHILD, 20, 60, 550, 40, hWnd, NULL, NULL, NULL);
 
@@ -180,6 +180,7 @@ BOOL UpdateInstance(HINSTANCE hInstance, int nCmdShow)
 
     HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
         CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
+
 
     if (!hWnd)
     {
