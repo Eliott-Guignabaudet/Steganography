@@ -79,7 +79,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     wcex.hInstance      = hInstance;
     wcex.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_STEGANOGRAPHY));
     wcex.hCursor        = LoadCursor(nullptr, IDC_ARROW);
-    wcex.hbrBackground  = (HBRUSH)(COLOR_WINDOW+24);
+    wcex.hbrBackground  = (HBRUSH)(COLOR_WINDOW+1);
     wcex.lpszMenuName   = MAKEINTRESOURCEW(IDC_STEGANOGRAPHY);
     wcex.lpszClassName  = szWindowClass;
     wcex.hIconSm        = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
@@ -104,36 +104,50 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
       CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
 
+   /*Heimanu*////
+   //Création des éléments de l'Interface Utilisateur
+   
+   //Background à gauche de l'écran
+   HWND l_background;
+   l_background = CreateWindowA("Static", " ", WS_TABSTOP | WS_VISIBLE | WS_CHILD, 20, 250, 550, 400, hWnd, NULL, NULL, NULL);
 
+   //Log à droite de l'écran
+   HWND log;
+   log = CreateWindowA("Static", "LOG", WS_TABSTOP | WS_VISIBLE | WS_CHILD | WS_BORDER | WS_VSCROLL, 850, 150, 550, 380, hWnd, NULL, NULL, NULL);
+   
+
+   //Tableaux des boutons de l'interface
    HWND buttons[3];
 
+   //Struct pour les paramètres du bouton
    struct buttonsetup
    {
-       int s_x = 0;
-       int s_y = 0;
-       int s_width = 0;
-       int s_height = 0;
-       const char* title = " ";
+       int s_x = 0; /*Position X du bouton*/
+       int s_y = 0; /*Position Y du bouton*/
+       int s_width = 0; /*Longueur du bouton*/
+       int s_height = 0; /*Largeur du bouton*/
+       const char* title = " "; /*Texte inscrit sur le bouton*/
+       int buttonnum = 0; /*Numéro du bouton*/
    };
 
    buttonsetup buttonmap[3];
-   buttonmap[0] = { 20, 20, 60, 60, "Donut"};
-   buttonmap[1] = { 600, 150, 120, 60, "Beignet"};
-   buttonmap[2] = { 20, 300, 60, 60, "Croissant"};
+   buttonmap[0] = { 180, 180, 180, 40, "Charger un fichier bitmap", 1}; /*Charger un fichier bitmap*/
+   buttonmap[1] = { 1250, 580, 150, 40, "Cacher le message", 2}; /*Cacher le message*/
+   buttonmap[2] = { 600, 600, 150, 40, "Extraire le message", 3}; /*Extraire le message*/
 
-   for (int b = 0; b < 3; b++)
+   for (int i = 0; i < 3; i++)
    {
        
-       buttons[b] = CreateWindowA("Button", buttonmap[b].title, WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON, buttonmap[b].s_x, buttonmap[b].s_y, buttonmap[b].s_width, buttonmap[b].s_height, hWnd, (HMENU)b, NULL, NULL);
+       buttons[i] = CreateWindowA("Button", buttonmap[i].title, WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON, buttonmap[i].s_x, buttonmap[i].s_y, buttonmap[i].s_width, buttonmap[i].s_height, hWnd, (HMENU) buttonmap[i].buttonnum, NULL, NULL);
        
    }
 
+   //Boîte de texte qu'on peut éditer
    HWND entry;
 
-   entry = CreateWindowA("Edit", "Write something", WS_TABSTOP | WS_VISIBLE | WS_CHILD | WS_BORDER | WS_THICKFRAME, 240, 20, 240, 60, hWnd, NULL, NULL, NULL);
+   entry = CreateWindowA("Edit", "Saisissez votre message ici", WS_TABSTOP | WS_VISIBLE | WS_CHILD | WS_BORDER, 850, 580, 360, 80, hWnd, NULL, NULL, NULL);
 
-   entry.
-
+   ////
    if (!hWnd)
    {
       return FALSE;
@@ -163,6 +177,14 @@ BOOL UpdateInstance(HINSTANCE hInstance, int nCmdShow)
     return TRUE;
 }
 
+void Open_File_Dialog(HWND hWnd)
+{
+    
+    return;
+}
+
+
+
 //
 //  FONCTION : WndProc(HWND, UINT, WPARAM, LPARAM)
 //
@@ -185,12 +207,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             // Analyse les sélections de menu :
             switch (wmId)
             {
-            case 1:
-                MessageBox(hWnd, L"Test", L"Test", 1);
+                /*Heimanu*/
+                //Déclenche un event lorsque le joueur appuie sur un bouton spécifique
+
+            case 1: /*Charger un fichier bitmap*/
+                MessageBox(hWnd, L"Test", L"Test", 0);
                 break;
-            case 2:
-                MessageBox(hWnd, L"Test", L"Test", 1);
+            case 2: /*Cacher le message*/
+                MessageBox(hWnd, L"Test", L"Test", 0);
                 break;
+            case 3: /*Extraire le message*/
+                MessageBox(hWnd, L"Test", L"Test", 0);
+                break;
+                ////
             case IDM_ABOUT:
                 DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
                 break;
