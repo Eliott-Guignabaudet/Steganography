@@ -2,7 +2,10 @@
 //
 
 #include "framework.h"
+
+
 #include "Steganography.h"
+#include "SteganoSystem.h"
 
 #define MAX_LOADSTRING 100
 
@@ -24,9 +27,18 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 {
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
-
+    
     // TODO: Placez le code ici.
+    Gdiplus::GdiplusStartupInput gdiplusStartupInput;
+    ULONG_PTR gdiplusToken;
+    Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
 
+    Gdiplus::Bitmap* bmp = 
+        new Gdiplus::Bitmap(L"Images/Facebook_logo_(square).png");
+    SteganoSystem::GetInstance()->HideMessage(*bmp, "dqslkjdhfq");
+
+
+    
     // Initialise les chaînes globales
     LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
     LoadStringW(hInstance, IDC_STEGANOGRAPHY, szWindowClass, MAX_LOADSTRING);

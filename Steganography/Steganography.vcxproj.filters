@@ -57,6 +57,9 @@
     <ClInclude Include="MainWindow.h">
       <Filter>Fichiers d%27en-tête\UI</Filter>
     </ClInclude>
+    <ClInclude Include="SteganoAlgoLSB.h">
+      <Filter>Fichiers d%27en-tête\Steganography</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Steganography.cpp">
@@ -79,6 +82,9 @@
     </ClCompile>
     <ClCompile Include="MainWindow.cpp">
       <Filter>Fichiers sources\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="SteganoAlgoLSB.cpp">
+      <Filter>Fichiers sources\Steganography</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

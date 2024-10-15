@@ -1,10 +1,19 @@
 #pragma once
+#include <vector>
 #include "ASteganoAlgo.h"
+
 class SteganoAlgoLSB :
     public ASteganoAlgo
 {
 public:
-    void HideMessage() override;
+
+    void HideMessage(Gdiplus::Bitmap& bmp, std::string message) override;
     std::string FindMessage() override;
+protected:
+    Gdiplus::Bitmap* m_bmp;
+    std::vector<BYTE>* m_imageBytesRGB;
+    std::vector<BYTE>* m_imageBytesA;
+    void ParseImage() override;
+    void UnparseImage() override;
 };
 

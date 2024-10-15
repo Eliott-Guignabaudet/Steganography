@@ -2,20 +2,26 @@
 #include <string>
 
 class ASteganoAlgo;
+namespace Gdiplus 
+{
+	class Bitmap;
+}
 
 class SteganoSystem
 {
 private:
 	static SteganoSystem* s_instance;
-	ASteganoAlgo* m_usedAlgo;
+	bool m_isInit;
+
+	ASteganoAlgo* m_algo;
 	void LoadImage();
+	void Init();
+
 public:
 	static SteganoSystem* GetInstance();
 
-	bool HideMessage(std::string a_message);
+	bool HideMessage(Gdiplus::Bitmap& bmp, const std::string& message);
 	std::string FindMessage();
-	void ParseImage();
-	void UnparseImage();
 
 };
 
