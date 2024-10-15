@@ -8,10 +8,6 @@ using namespace Gdiplus;
 
 SteganoSystem* SteganoSystem::s_instance = nullptr;
 
-void SteganoSystem::LoadImage()
-{
-}
-
 void SteganoSystem::Init()
 {
 	if (m_isInit)

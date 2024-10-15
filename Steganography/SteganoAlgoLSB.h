@@ -2,6 +2,8 @@
 #include <vector>
 #include "ASteganoAlgo.h"
 
+typedef unsigned char       BYTE;
+
 class SteganoAlgoLSB :
     public ASteganoAlgo
 {
@@ -15,5 +17,6 @@ protected:
     std::vector<BYTE>* m_imageBytesA;
     void ParseImage() override;
     void UnparseImage() override;
+    void LSBAlgo(const char* message);
 };
 

@@ -8,12 +8,8 @@ void SteganoAlgoLSB::HideMessage(Gdiplus::Bitmap& bmp, std::string message)
 {
 	m_bmp = &bmp; 
 	ParseImage();
-	BYTE first = (*m_imageBytesRGB)[0];
-	BYTE test = 00001001;
-	const char* c = message.c_str();
-	bool testcheck = (test >> 1);
-	test &= ~(1 << 0);
-
+	LSBAlgo(message.c_str());
+	UnparseImage();
 	std::cout << "Hide message LSB" << std::endl;
 }
 
@@ -58,4 +54,32 @@ void SteganoAlgoLSB::ParseImage()
 
 void SteganoAlgoLSB::UnparseImage()
 {
+
+}
+
+void SteganoAlgoLSB::LSBAlgo(const char* message)
+{
+	int length = strlen(message);
+	for (int i = 0; i < length; i++)
+	{
+		const char letter = message[i];
+		for (int j = 0; j < 8; j++)
+		{
+			unsigned int index = i * 8 + j;
+			bool isBitTrue = letter & (1 << j);
+			if (isBitTrue)
+			{
+				(*m_imageBytesRGB)[index] |= 1 << 0;
+			}
+			else 
+			{
+				(*m_imageBytesRGB)[index] &= ~(1 << 0);
+			}
+		}
+	}
+	BYTE first = (*m_imageBytesRGB)[0];
+	BYTE test = 100;
+	bool testcheck = (test) & (1 << (1));
+	test &= ~(1 << 0);
+
 }

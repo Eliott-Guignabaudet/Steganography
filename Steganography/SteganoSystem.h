@@ -14,7 +14,6 @@ private:
 	bool m_isInit;
 
 	ASteganoAlgo* m_algo;
-	void LoadImage();
 	void Init();
 
 public:
