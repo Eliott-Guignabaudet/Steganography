@@ -12,7 +12,6 @@ WCHAR szTitle[MAX_LOADSTRING];                  // Texte de la barre de titre
 WCHAR szWindowClass[MAX_LOADSTRING];            // nom de la classe de fenêtre principale
 
 
-
 // Déclarations anticipées des fonctions incluses dans ce module de code :
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
@@ -101,22 +100,39 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
    hInst = hInstance; // Stocke le handle d'instance dans la variable globale
 
-   HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
+   HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_MINIMIZEBOX | WS_SYSMENU | CS_DROPSHADOW,
       CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
 
    /*Heimanu*////
    //Création des éléments de l'Interface Utilisateur
    
+   //CreateWindowA(
+   // Nom de la classe (voir dans la docu),
+   // Texte inscrit sur l'élément d'interface,
+   // Styles de la classe (voir dans la docu), 
+   // Position X,
+   // Position Y,
+   // Taille X,
+   // Taille Y,
+   // Parent HWND,
+   // hMenu->NULL par défaut => pour assigner un numéro pour WM_Command,
+   // hInstance->NULL par défaut,
+   // Ip Param->NULL par défaut
+   // );
+
    //Background à gauche de l'écran
    HWND l_background;
    l_background = CreateWindowA("Static", " ", WS_TABSTOP | WS_VISIBLE | WS_CHILD, 20, 250, 550, 400, hWnd, NULL, NULL, NULL);
 
+   //Texte cu message caché à gauche de l'écran
+   HWND l_text;
+   l_text = CreateWindowA("Static", "Message de l'image: ", WS_TABSTOP | WS_VISIBLE | WS_CHILD, 20, 60, 550, 40, hWnd, NULL, NULL, NULL);
+
    //Log à droite de l'écran
    HWND log;
    log = CreateWindowA("Static", "LOG", WS_TABSTOP | WS_VISIBLE | WS_CHILD | WS_BORDER | WS_VSCROLL, 850, 150, 550, 380, hWnd, NULL, NULL, NULL);
-   
 
-   //Tableaux des boutons de l'interface
+   //Tableau des boutons de l'interface
    HWND buttons[3];
 
    //Struct pour les paramètres du bouton
@@ -144,7 +160,6 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
    //Boîte de texte qu'on peut éditer
    HWND entry;
-
    entry = CreateWindowA("Edit", "Saisissez votre message ici", WS_TABSTOP | WS_VISIBLE | WS_CHILD | WS_BORDER, 850, 580, 360, 80, hWnd, NULL, NULL, NULL);
 
    ////
@@ -177,10 +192,9 @@ BOOL UpdateInstance(HINSTANCE hInstance, int nCmdShow)
     return TRUE;
 }
 
-void Open_File_Dialog(HWND hWnd)
+void UpdateText(HWND hWnd)
 {
-    
-    return;
+
 }
 
 
@@ -208,7 +222,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             switch (wmId)
             {
                 /*Heimanu*/
-                //Déclenche un event lorsque le joueur appuie sur un bouton spécifique
+                //Déclenche un event lorsque le joueur appuie sur un bouton créé dans InitInstance()
 
             case 1: /*Charger un fichier bitmap*/
                 MessageBox(hWnd, L"Test", L"Test", 0);
@@ -219,7 +233,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             case 3: /*Extraire le message*/
                 MessageBox(hWnd, L"Test", L"Test", 0);
                 break;
-                ////
+
+                ////////////////////////////////
             case IDM_ABOUT:
                 DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
                 break;
@@ -231,6 +246,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             }
         }
         break;
+
     case WM_PAINT:
         {
             PAINTSTRUCT ps;
@@ -250,6 +266,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     default:
         return DefWindowProc(hWnd, message, wParam, lParam);
     }
+
     return 0;
 }
 
