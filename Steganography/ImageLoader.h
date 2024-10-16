@@ -1,6 +1,42 @@
+#include "framework.h"
+
+#include <objidl.h>
+
+#include <windows.h>
+#include <gdiplus.h>
+#include <gdiplusheaders.h>
+#include <iostream>
+
+#pragma comment(lib, "gdiplus.lib")
+
+using namespace Gdiplus;
+
+
+
+
 #pragma once
 
-class ImageLoader 
+
+
+class ImageLoader
 {
+public:
+
+
+
+	ImageLoader();
+	~ImageLoader();
+
+	void ConvertToBmp(const WCHAR* pngFilePath, const WCHAR* bmpFilePath);
+	int GetEncoderClsid(const WCHAR* format, CLSID* pClsid);
+
+	Bitmap* GetPictureToDisplay();
+
+protected:
+
+	Bitmap* bmpImage;
+	
 
 };
+
+
