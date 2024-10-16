@@ -9,6 +9,7 @@
 #include "Steganography.h"
 #include "SteganoSystem.h"
 #include "ImageLoader.h"
+#include "CLSIDEncoder.h"
 
 #define MAX_LOADSTRING 100
 
@@ -37,6 +38,7 @@ INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 // TODO: a retirer
 HWND l_background;
 ImageLoader* imgLoader;
+WCHAR* imagePath;
 
 const std::string MESSAGE_TO_HIDE =
 "A long time ago, in a galaxy far, far, away... \
@@ -246,9 +248,9 @@ int OpenFile(HWND hWnd)
             
             size_t outSize;
             mbstowcs_s(&outSize, file_name_wc, file_nameSize, file_name, file_nameSize - 1);
-
+            imagePath = file_name_wc;
             imgLoader->ConvertToBmp(file_name_wc, L"Images/bmptest.bmp");
-            WndProc(hWnd, WM_PAINT, 0, 0);
+            SendMessage(hWnd, WM_PAINT, 0, 0);
         }
     }
     else 
@@ -261,19 +263,29 @@ int OpenFile(HWND hWnd)
 
 void ExtractMessage(HWND hWnd)
 {
-    MessageBox(hWnd, L"Test", L"Test", 0);
+    Bitmap* bmp = imgLoader->GetPictureToDisplay();
+    std::string messgae = SteganoSystem::GetInstance()->FindMessage(*bmp);
+    std::wstring widestr = std::wstring(messgae.begin(), messgae.end());
+
+    MessageBox(hWnd, widestr.c_str(), L"Test", 0);
     return;
 }
 
 void HideMessage(HWND hWnd)
 {
-    Gdiplus::Bitmap* bmp =
-        new Gdiplus::Bitmap(L"Images/Facebook_logo_(square).png");
-    SteganoSystem::GetInstance()->HideMessage(*bmp, "Bonjour je sui le message");
+    Bitmap* bmp = imgLoader->GetPictureToDisplay();
 
-    Gdiplus::Bitmap* bmptest =
-        new Gdiplus::Bitmap(L"Images/FileChanged.png");
-    std::string messgae = SteganoSystem::GetInstance()->FindMessage(*bmptest);
+    SteganoSystem::GetInstance()->HideMessage(*bmp, MESSAGE_TO_HIDE);
+
+    CLSID clsid;
+    CLSIDEncoder::GetEncoderClsid(L"image/bmp", &clsid);
+    //bmp->Save(imagePath, &clsid, NULL);
+    bmp->Save(L"C:\\Users\\eguignabaudet\\source\\repos\\Steganography\\Steganography\\Images\\FileChanged.bmp", &clsid, NULL);
+    Bitmap* bmptest =
+        new Bitmap(imagePath);
+
+
+    std::string messgae = SteganoSystem::GetInstance()->FindMessage(*bmp);
 
     MessageBox(hWnd, L"Test", L"Test", 0);
     return;
@@ -388,16 +400,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         {
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hWnd, &ps);
+            
             EndPaint(hWnd, &ps);
 
             hdc = BeginPaint(l_background, &ps);
+           
             Graphics graphics(hdc);
 
             if (imgLoader->GetPictureToDisplay() != nullptr)
             {
-                graphics.DrawImage(imgLoader->GetPictureToDisplay(), 0, 0);
+                Rect myrect(0, 0, 550, 400);
+                graphics.DrawImage(imgLoader->GetPictureToDisplay(), myrect);
             }
-            
             EndPaint(l_background, &ps);
 
         }

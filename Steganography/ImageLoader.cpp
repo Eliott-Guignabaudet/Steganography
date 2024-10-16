@@ -43,7 +43,7 @@ void ImageLoader::ConvertToBmp(const WCHAR* pngFilePath, const WCHAR* bmpFilePat
     // deffinit la resolution de notre bitmap a celle de l'image choisit
     bmpImage = new Bitmap(pngFilePath);
    
-    bmpImage->SetResolution(refImage.GetWidth(), refImage.GetHeight());
+    //bmpImage->SetResolution(refImage.GetWidth(), refImage.GetHeight());
 
     // Dessiner l'image PNG sur le bitmap
     Graphics graphics(bmpImage);
@@ -52,7 +52,7 @@ void ImageLoader::ConvertToBmp(const WCHAR* pngFilePath, const WCHAR* bmpFilePat
     // Enregistrer le bitmap au format BMP
     CLSID bmpClsid;
     GetEncoderClsid(L"image/bmp", &bmpClsid);
-    bmpImage->Save(bmpFilePath, &bmpClsid, nullptr);
+    bmpImage->Save(bmpFilePath, &bmpClsid, 0);
 
 }
 

@@ -6,7 +6,7 @@
 #include <gdiplus.h>
 #include "SteganoAlgoLSB.h"
 
-const std::string ACCTEPTED_CHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.\n!?,;' ";
+const std::string ACCTEPTED_CHARS = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.\n!?,;' ";
 
 
 
@@ -17,10 +17,9 @@ void SteganoAlgoLSB::HideMessage(Gdiplus::Bitmap& bmp, const std::string& messag
 	ParseImage();
 	LSBAlgo(message.c_str());
 	UnparseImage();
-	CLSID clsidPng;
-	//CLSIDFromString(L"{557CF406-1A04-11D3-9A73-0000F81EF32E}", &guidPng);
-	CLSIDEncoder::GetEncoderClsid(L"image/png", &clsidPng);
-	m_bmp->Save(L"Images/FileChanged.png", &clsidPng, NULL);
+	//CLSID clsidPng;
+	/*CLSIDEncoder::GetEncoderClsid(L"image/png", &clsidPng);
+	m_bmp->Save(L"C:\\Users\\eguignabaudet\\source\\repos\\Steganography\\Steganography\\Images\\FileChanged.png", &clsidPng, NULL);*/
 	std::cout << "Hide message LSB" << std::endl;
 }
 
