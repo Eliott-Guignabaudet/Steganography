@@ -7,6 +7,8 @@
 #include "Steganography.h"
 
 #define MAX_LOADSTRING 100
+
+//Boutons de l'interface
 #define OPEN_FILE_BUTTON 1
 #define HIDE_MESSAGE_BUTTON 2
 #define EXTRACT_MESSAGE_BUTTON 3
@@ -214,18 +216,21 @@ int OpenFile(HWND hWnd)
     return 0;
 }
 
-int ExtractMessage(HWND hWnd)
+void ExtractMessage(HWND hWnd)
 {
-    return 0;
+    MessageBox(hWnd, L"Test", L"Test", 0);
+    return;
 }
 
-int HideMessage(HWND hWnd)
+void HideMessage(HWND hWnd)
 {
-    return 0;
+    MessageBox(hWnd, L"Test", L"Test", 0);
+    return;
 }
 
-void WriteLog()
+void WriteLog(HWND hwnd)
 {
+    SetWindowTextA(hwnd, "Test");
     return;
 }
 
@@ -240,7 +245,7 @@ void WriteLog()
 //
 //
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
-{
+{   
 
     char buffer[250];
     //[] nombre total de caractères que l'on peut mettre dans le tableau
@@ -277,7 +282,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         l_text = CreateWindowA("Static", "Message de l'image: ", WS_TABSTOP | WS_VISIBLE | WS_CHILD | WS_BORDER, 20, 60, 550, 40, hWnd, NULL, NULL, NULL);
 
         //Log à droite de l'écran
-        HWND log;
+        HWND log = NULL;
+
         log = CreateWindowA("Static", "LOG", WS_TABSTOP | WS_VISIBLE | WS_CHILD | WS_BORDER | WS_VSCROLL, 850, 150, 550, 380, hWnd, NULL, NULL, NULL);
 
         //Boîte de texte qu'on peut éditer
@@ -303,11 +309,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 OpenFile(hWnd);
                 break;
             case HIDE_MESSAGE_BUTTON: /*Cacher le message*/
-                HideMessage();
+                HideMessage(hWnd);
                 break;
             case EXTRACT_MESSAGE_BUTTON: /*Extraire le message*/
-                MessageBox(hWnd, L"Test", L"Test", 0);
-                ExtractMessage();
+                ExtractMessage(hWnd);
                 break;
 
                 ////////////////////////////////
