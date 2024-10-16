@@ -50,7 +50,6 @@ void SteganoAlgoLSB::ParseImage()
 	std::vector<BYTE>* bytesA = new std::vector<BYTE>();
 	h = m_bmp->GetHeight();
 	w = m_bmp->GetWidth();
-
 	for (int i = 0; i < h; i++)
 	{
 		for (int j = 0; j < w; j++)
@@ -97,7 +96,12 @@ void SteganoAlgoLSB::UnparseImage()
 
 void SteganoAlgoLSB::LSBAlgo(const char* message)
 {
+
 	int length = strlen(message);
+	for (int i = 0; i < m_imageBytesRGB->size(); i++)
+	{
+		(*m_imageBytesRGB)[i] &= ~(1 << 0);
+	}
 	for (int i = 0; i < length; i++)
 	{
 		const char letter = message[i];

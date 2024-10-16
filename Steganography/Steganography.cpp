@@ -37,8 +37,10 @@ INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 
 // TODO: a retirer
 HWND l_background;
+HWND l_text;
 ImageLoader* imgLoader;
 WCHAR* imagePath;
+
 
 const std::string MESSAGE_TO_HIDE =
 "A long time ago, in a galaxy far, far, away... \
@@ -57,9 +59,9 @@ can save her people and restore freedom to the galaxy... \
 The awesome yellow planet of Tatooine emerges from a total \
 eclipse, her two moons glowing against the darkness.A tiny \
 silver spacecraft, a Rebel Blockade Runner firing lasers \
-from the back of the ship, races through space.It is pursed\
-by a giant Imperial Stardestroyer.Hundreds of deadly\
-laserbolts streak from the Imperial Stardestroyer, causing\
+from the back of the ship, races through space.It is pursed \
+by a giant Imperial Stardestroyer.Hundreds of deadly \
+laserbolts streak from the Imperial Stardestroyer, causing \
 the main solar fin of the Rebel craft to disintegrate.";
 
 
@@ -250,7 +252,8 @@ int OpenFile(HWND hWnd)
             mbstowcs_s(&outSize, file_name_wc, file_nameSize, file_name, file_nameSize - 1);
             imagePath = file_name_wc;
             imgLoader->ConvertToBmp(file_name_wc, L"Images/bmptest.bmp");
-            SendMessage(hWnd, WM_PAINT, 0, 0);
+            RedrawWindow(hWnd, NULL, NULL, RDW_INVALIDATE | RDW_INTERNALPAINT);
+            //SendMessage(hWnd, WM_PAINT, 0, 0);
         }
     }
     else 
@@ -264,9 +267,9 @@ int OpenFile(HWND hWnd)
 void ExtractMessage(HWND hWnd)
 {
     Bitmap* bmp = imgLoader->GetPictureToDisplay();
-    std::string messgae = SteganoSystem::GetInstance()->FindMessage(*bmp);
-    std::wstring widestr = std::wstring(messgae.begin(), messgae.end());
-
+    std::string message = SteganoSystem::GetInstance()->FindMessage(*bmp);
+    std::wstring widestr = std::wstring(message.begin(), message.end());
+    SetWindowTextA(l_text, message.c_str());
     MessageBox(hWnd, widestr.c_str(), L"Test", 0);
     return;
 }
@@ -279,13 +282,7 @@ void HideMessage(HWND hWnd)
 
     CLSID clsid;
     CLSIDEncoder::GetEncoderClsid(L"image/bmp", &clsid);
-    //bmp->Save(imagePath, &clsid, NULL);
     bmp->Save(L"C:\\Users\\eguignabaudet\\source\\repos\\Steganography\\Steganography\\Images\\FileChanged.bmp", &clsid, NULL);
-    Bitmap* bmptest =
-        new Bitmap(imagePath);
-
-
-    std::string messgae = SteganoSystem::GetInstance()->FindMessage(*bmp);
 
     MessageBox(hWnd, L"Test", L"Test", 0);
     return;
@@ -341,13 +338,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         l_background = CreateWindowA("Static", " ", WS_TABSTOP | WS_VISIBLE | WS_CHILD | WS_BORDER, 20, 250, 550, 400, hWnd, NULL, NULL, NULL);
 
         //Texte du message caché à gauche de l'écran
-        HWND l_text;
         l_text = CreateWindowA("Static", "Message de l'image: ", WS_TABSTOP | WS_VISIBLE | WS_CHILD | WS_BORDER, 20, 60, 550, 40, hWnd, NULL, NULL, NULL);
 
         //Log à droite de l'écran
         HWND log = NULL;
 
-        log = CreateWindowA("Static", "LOG", WS_TABSTOP | WS_VISIBLE | WS_CHILD | WS_BORDER | WS_VSCROLL, 850, 150, 550, 380, hWnd, NULL, NULL, NULL);
+        l_text = CreateWindowA("Static", "LOG", WS_TABSTOP | WS_VISIBLE | WS_CHILD | WS_BORDER | WS_VSCROLL, 850, 150, 550, 380, hWnd, NULL, NULL, NULL);
 
         //Boîte de texte qu'on peut éditer
         HWND entry = 0;
