@@ -6,6 +6,7 @@
 #include <commdlg.h>
 #include "Steganography.h"
 #include "SteganoSystem.h"
+#include "ImageLoader.h"
 
 #define MAX_LOADSTRING 100
 
@@ -31,7 +32,9 @@ BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 
-
+// TODO: a retirer
+HWND l_background;
+ImageLoader* imgLoader;
 
 const std::string MESSAGE_TO_HIDE =
 "A long time ago, in a galaxy far, far, away... \
@@ -68,6 +71,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     Gdiplus::GdiplusStartupInput gdiplusStartupInput;
     ULONG_PTR gdiplusToken;
     Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
+    imgLoader = new ImageLoader();
 
     
     // Initialise les chaînes globales
@@ -228,14 +232,31 @@ int OpenFile(HWND hWnd)
     if (GetOpenFileNameA(&ofn) == TRUE) {
         
         hbitmap = (HBITMAP)LoadImageA(NULL, file_name, IMAGE_BITMAP, 600, 600, LR_LOADFROMFILE);
-
+        
+        
         if (hbitmap == NULL) 
         {
             MessageBox(hWnd, L"Erreur de chargement du bitmap!", L"Erreur", MB_OK | MB_ICONERROR);
         }
         else
         {
-            MessageBox(hWnd, L"Erreur de chargement du bitmap!", L"Erreur", MB_OK | MB_ICONINFORMATION);
+            const char* pt = file_name;
+            size_t length;
+            size_t cSize = sizeof(file_name);
+            wchar_t file_name_wc;
+            mbstate_t mbs;
+
+            mbrlen(NULL, 0, &mbs);
+            while (cSize > 0)
+            {
+                length = mbrtowc(&file_name_wc, file_name, cSize, &mbs);
+                if ((length == 0) || (length > cSize)) break;
+                pt += length;
+                cSize -= length;
+
+            }
+            imgLoader->ConvertToBmp(&file_name_wc, L"Images/bmptest.bmp");
+            WndProc(hWnd, WM_PAINT, 0, 0);
         }
     }
     else 
@@ -312,7 +333,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     // );
 
     //Background à gauche de l'écran
-        HWND l_background;
+
         l_background = CreateWindowA("Static", " ", WS_TABSTOP | WS_VISIBLE | WS_CHILD | WS_BORDER, 20, 250, 550, 400, hWnd, NULL, NULL, NULL);
 
         //Texte du message caché à gauche de l'écran
@@ -375,8 +396,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         {
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hWnd, &ps);
-
             EndPaint(hWnd, &ps);
+
+            hdc = BeginPaint(l_background, &ps);
+            Graphics graphics(hdc);
+
+            if (imgLoader->GetPictureToDisplay() != nullptr)
+            {
+                graphics.DrawImage(imgLoader->GetPictureToDisplay(), 0, 0);
+            }
+            
+            EndPaint(l_background, &ps);
+
         }
         break;
     case WM_DESTROY:

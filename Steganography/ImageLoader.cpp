@@ -34,8 +34,14 @@ void ImageLoader::ConvertToBmp(const WCHAR* pngFilePath, const WCHAR* bmpFilePat
         std::cerr << "Erreur de chargement de l'image" << std::endl;
     }
 
-    // deffinit la resolution de notre bitmap a celle de l'image choisit
+    if (bmpImage != nullptr)
+    {
+        delete bmpImage;
+        bmpImage = nullptr;
+    }
 
+    // deffinit la resolution de notre bitmap a celle de l'image choisit
+    bmpImage = new Bitmap(bmpFilePath);
    
     bmpImage->SetResolution(refImage.GetWidth(), refImage.GetHeight());
 
@@ -80,6 +86,10 @@ int ImageLoader::GetEncoderClsid(const WCHAR* format, CLSID* pClsid)
 
 Bitmap* ImageLoader::GetPictureToDisplay() // Donne l'image a afficher
 {
+    if (bmpImage == nullptr)
+    {
+        return bmpImage;
+    }
     if(bmpImage->GetWidth() == 0 || bmpImage->GetHeight() == 0)
     {
         std::cerr << "L'image est vide" << std::endl;
