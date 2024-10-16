@@ -69,14 +69,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     ULONG_PTR gdiplusToken;
     Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
 
-    Gdiplus::Bitmap* bmpToHide = 
-        new Gdiplus::Bitmap(L"Images/Facebook_logo_(square).png");
-    SteganoSystem::GetInstance()->HideMessage(*bmpToHide, MESSAGE_TO_HIDE);
-
-    Gdiplus::Bitmap* bmpToFind =
-        new Gdiplus::Bitmap(L"Images/FileChanged.png");
-    std::string message =  SteganoSystem::GetInstance()->FindMessage(*bmpToFind);
-
     
     // Initialise les chaînes globales
     LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
@@ -262,6 +254,14 @@ void ExtractMessage(HWND hWnd)
 
 void HideMessage(HWND hWnd)
 {
+    Gdiplus::Bitmap* bmp =
+        new Gdiplus::Bitmap(L"Images/Facebook_logo_(square).png");
+    SteganoSystem::GetInstance()->HideMessage(*bmp, "Bonjour je sui le message");
+
+    Gdiplus::Bitmap* bmptest =
+        new Gdiplus::Bitmap(L"Images/FileChanged.png");
+    std::string messgae = SteganoSystem::GetInstance()->FindMessage(*bmptest);
+
     MessageBox(hWnd, L"Test", L"Test", 0);
     return;
 }
