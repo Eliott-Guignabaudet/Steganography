@@ -26,12 +26,14 @@ public:
 	~ImageLoader();
 
 	void ConvertToBmp(const WCHAR* pngFilePath, const WCHAR* bmpFilePath);
+	int GetEncoderClsid(const WCHAR* format, CLSID* pClsid);
 
 	Bitmap GetPictureToDisplay();
 
 protected:
 
 	Bitmap bmpImage;
+	
 
 };
 

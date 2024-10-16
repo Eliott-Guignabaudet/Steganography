@@ -48,7 +48,8 @@ void ImageLoader::ConvertToBmp(const WCHAR* pngFilePath, const WCHAR* bmpFilePat
 
 }
 
-int GetEncoderClsid(const WCHAR* format, CLSID* pClsid) 
+
+int ImageLoader::GetEncoderClsid(const WCHAR* format, CLSID* pClsid)
 {
 
     UINT num = 0;          // nombre d'encodeurs
@@ -77,11 +78,12 @@ int GetEncoderClsid(const WCHAR* format, CLSID* pClsid)
 
 Bitmap ImageLoader::GetPictureToDisplay() // Donne l'image a afficher
 {
-    if(bmpImage.GetWidth() && bmpImage.GetHeight() == 0)
+    if(bmpImage.GetWidth() == 0 || bmpImage.GetHeight() == 0)
     {
         std::cerr << "L'image est vide" << std::endl;
         return Bitmap(0,0,NULL);
     }
+
 
     return Bitmap(bmpImage.GetWidth(), bmpImage.GetHeight(), bmpImage.GetPixelFormat());
 }
