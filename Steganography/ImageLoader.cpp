@@ -15,7 +15,7 @@ using namespace Gdiplus;
 
 
 
-ImageLoader::ImageLoader() : bmpImage(0, 0, PixelFormat32bppARGB) // Constructeur
+ImageLoader::ImageLoader() // Constructeur
 {
 }
 
@@ -35,16 +35,18 @@ void ImageLoader::ConvertToBmp(const WCHAR* pngFilePath, const WCHAR* bmpFilePat
     }
 
     // deffinit la resolution de notre bitmap a celle de l'image choisit
-    bmpImage.SetResolution(refImage.GetWidth(), refImage.GetHeight());
+
+   
+    bmpImage->SetResolution(refImage.GetWidth(), refImage.GetHeight());
 
     // Dessiner l'image PNG sur le bitmap
-    Graphics graphics(&bmpImage);
+    Graphics graphics(bmpImage);
     graphics.DrawImage(&refImage, 0, 0);
 
     // Enregistrer le bitmap au format BMP
     CLSID bmpClsid;
     GetEncoderClsid(L"image/bmp", &bmpClsid);
-    bmpImage.Save(bmpFilePath, &bmpClsid, nullptr);
+    bmpImage->Save(bmpFilePath, &bmpClsid, nullptr);
 
 }
 
@@ -76,14 +78,14 @@ int ImageLoader::GetEncoderClsid(const WCHAR* format, CLSID* pClsid)
 
 }
 
-Bitmap ImageLoader::GetPictureToDisplay() // Donne l'image a afficher
+Bitmap* ImageLoader::GetPictureToDisplay() // Donne l'image a afficher
 {
-    if(bmpImage.GetWidth() == 0 || bmpImage.GetHeight() == 0)
+    if(bmpImage->GetWidth() == 0 || bmpImage->GetHeight() == 0)
     {
         std::cerr << "L'image est vide" << std::endl;
-        return Bitmap(0,0,NULL);
+        return nullptr;
     }
 
 
-    return Bitmap(bmpImage.GetWidth(), bmpImage.GetHeight(), bmpImage.GetPixelFormat());
+    return bmpImage;
 }
