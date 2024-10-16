@@ -22,6 +22,29 @@ INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 
 
 
+const std::string MESSAGE_TO_HIDE =
+"A long time ago, in a galaxy far, far, away... \
+A vast sea of stars serves as the backdrop for the main \
+title.War drums echo through the heavens as a rollup slowly \
+crawls into infinity. \
+It is a period of civil war.Rebel spaceships, striking from \
+a hidden base, have won their first victory against the evil \
+Galactic Empire. \
+During the battle, Rebel spies managed to steal secret plans \
+to the Empire's ultimate weapon, the Death Star, an armored \
+space station with enough power to destroy an entire planet. \
+Pursued by the Empire's sinister agents, Princess Leia races \
+home aboard her starship, custodian of the stolen plans that \
+can save her people and restore freedom to the galaxy... \
+The awesome yellow planet of Tatooine emerges from a total \
+eclipse, her two moons glowing against the darkness.A tiny \
+silver spacecraft, a Rebel Blockade Runner firing lasers \
+from the back of the ship, races through space.It is pursed\
+by a giant Imperial Stardestroyer.Hundreds of deadly\
+laserbolts streak from the Imperial Stardestroyer, causing\
+the main solar fin of the Rebel craft to disintegrate.";
+
+
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
                      _In_ LPWSTR    lpCmdLine,
@@ -36,8 +59,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
 
     Gdiplus::Bitmap* bmpToHide = 
-        new Gdiplus::Bitmap(L"Images/Quest.png");
-    SteganoSystem::GetInstance()->HideMessage(*bmpToHide, "Bonjour Je suis le, message");
+        new Gdiplus::Bitmap(L"Images/Facebook_logo_(square).png");
+    SteganoSystem::GetInstance()->HideMessage(*bmpToHide, MESSAGE_TO_HIDE);
 
     Gdiplus::Bitmap* bmpToFind =
         new Gdiplus::Bitmap(L"Images/FileChanged.png");

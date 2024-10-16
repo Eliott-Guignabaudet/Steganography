@@ -6,6 +6,7 @@
 #include <gdiplus.h>
 #include "SteganoAlgoLSB.h"
 
+const std::string ACCTEPTED_CHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.\n!?,;' ";
 
 
 
@@ -136,7 +137,8 @@ void SteganoAlgoLSB::LSBAlgoReverse(std::string& message)
 				letter &= ~(1 << j);
 			}
 		}
-		if ((letter >= 'a' && letter <= 'z') || (letter >= 'A' && letter <= 'Z') || letter == ' ')
+
+		if (ACCTEPTED_CHARS.find(letter) != std::string::npos)
 		{
 			message += letter;
 		}
