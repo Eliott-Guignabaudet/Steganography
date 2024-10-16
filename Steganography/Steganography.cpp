@@ -4,6 +4,8 @@
 #include "framework.h"
 #include <windows.h>
 #include <commdlg.h>
+#include <wchar.h>
+#include <stdlib.h>
 #include "Steganography.h"
 #include "SteganoSystem.h"
 #include "ImageLoader.h"
@@ -233,29 +235,19 @@ int OpenFile(HWND hWnd)
         
         hbitmap = (HBITMAP)LoadImageA(NULL, file_name, IMAGE_BITMAP, 600, 600, LR_LOADFROMFILE);
         
-        
         if (hbitmap == NULL) 
         {
             MessageBox(hWnd, L"Erreur de chargement du bitmap!", L"Erreur", MB_OK | MB_ICONERROR);
         }
         else
         {
-            const char* pt = file_name;
-            size_t length;
-            size_t cSize = sizeof(file_name);
-            wchar_t file_name_wc;
-            mbstate_t mbs;
+            const size_t file_nameSize = strlen(file_name) + 1;
+            wchar_t* file_name_wc = new wchar_t[file_nameSize];
+            
+            size_t outSize;
+            mbstowcs_s(&outSize, file_name_wc, file_nameSize, file_name, file_nameSize - 1);
 
-            mbrlen(NULL, 0, &mbs);
-            while (cSize > 0)
-            {
-                length = mbrtowc(&file_name_wc, file_name, cSize, &mbs);
-                if ((length == 0) || (length > cSize)) break;
-                pt += length;
-                cSize -= length;
-
-            }
-            imgLoader->ConvertToBmp(&file_name_wc, L"Images/bmptest.bmp");
+            imgLoader->ConvertToBmp(file_name_wc, L"Images/bmptest.bmp");
             WndProc(hWnd, WM_PAINT, 0, 0);
         }
     }

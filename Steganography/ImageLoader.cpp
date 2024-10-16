@@ -41,7 +41,7 @@ void ImageLoader::ConvertToBmp(const WCHAR* pngFilePath, const WCHAR* bmpFilePat
     }
 
     // deffinit la resolution de notre bitmap a celle de l'image choisit
-    bmpImage = new Bitmap(bmpFilePath);
+    bmpImage = new Bitmap(pngFilePath);
    
     bmpImage->SetResolution(refImage.GetWidth(), refImage.GetHeight());
 
