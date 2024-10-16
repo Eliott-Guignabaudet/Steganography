@@ -2,14 +2,22 @@
 //
 
 #include "framework.h"
+#include <windows.h>
+#include <commdlg.h>
 #include "Steganography.h"
 
 #define MAX_LOADSTRING 100
+#define OPEN_FILE_BUTTON 1
+#define HIDE_MESSAGE_BUTTON 2
+#define EXTRACT_MESSAGE_BUTTON 3
 
 // Variables globales :
 HINSTANCE hInst;                                // instance actuelle
 WCHAR szTitle[MAX_LOADSTRING];                  // Texte de la barre de titre
 WCHAR szWindowClass[MAX_LOADSTRING];            // nom de la classe de fenêtre principale
+
+//Déclaration d'un handle bitmap pour charger une image
+HBITMAP hbitmap = NULL;
 
 
 // Déclarations anticipées des fonctions incluses dans ce module de code :
@@ -100,69 +108,9 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
    hInst = hInstance; // Stocke le handle d'instance dans la variable globale
 
-   HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_MINIMIZEBOX | WS_SYSMENU | CS_DROPSHADOW,
+   HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_MINIMIZEBOX | WS_OVERLAPPEDWINDOW | CS_DROPSHADOW,
       CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
 
-   /*Heimanu*////
-   //Création des éléments de l'Interface Utilisateur
-   
-   //CreateWindowA(
-   // Nom de la classe (voir dans la docu),
-   // Texte inscrit sur l'élément d'interface,
-   // Styles de la classe (voir dans la docu), 
-   // Position X,
-   // Position Y,
-   // Taille X,
-   // Taille Y,
-   // Parent HWND,
-   // hMenu->NULL par défaut => assigner un numéro identifiable pour WM_Command,
-   // hInstance->NULL par défaut,
-   // Ip Param->NULL par défaut
-   // );
-
-   //Background à gauche de l'écran
-   HWND l_background;
-   l_background = CreateWindowA("Static", " ", WS_TABSTOP | WS_VISIBLE | WS_CHILD, 20, 250, 550, 400, hWnd, NULL, NULL, NULL);
-
-   //Texte du message caché à gauche de l'écran
-   HWND l_text;
-   l_text = CreateWindowA("Static", "Message de l'image: ", WS_TABSTOP | WS_VISIBLE | WS_CHILD, 20, 60, 550, 40, hWnd, NULL, NULL, NULL);
-
-   //Log à droite de l'écran
-   HWND log;
-   log = CreateWindowA("Static", "LOG", WS_TABSTOP | WS_VISIBLE | WS_CHILD | WS_BORDER | WS_VSCROLL, 850, 150, 550, 380, hWnd, NULL, NULL, NULL);
-
-   //Tableau des boutons de l'interface
-   HWND buttons[3];
-
-   //Struct pour les paramètres du bouton
-   struct buttonsetup
-   {
-       int s_x = 0; /*Position X du bouton*/
-       int s_y = 0; /*Position Y du bouton*/
-       int s_width = 0; /*Longueur du bouton*/
-       int s_height = 0; /*Largeur du bouton*/
-       const char* title = " "; /*Texte inscrit sur le bouton*/
-       int buttonnum = 0; /*Numéro du bouton*/
-   };
-
-   buttonsetup buttonmap[3];
-   buttonmap[0] = { 180, 180, 180, 40, "Charger un fichier bitmap", 1}; /*Charger un fichier bitmap*/
-   buttonmap[1] = { 1250, 580, 150, 40, "Cacher le message", 2}; /*Cacher le message*/
-   buttonmap[2] = { 600, 600, 150, 40, "Extraire le message", 3}; /*Extraire le message*/
-
-   for (int i = 0; i < 3; i++)
-   {
-       
-       buttons[i] = CreateWindowA("Button", buttonmap[i].title, WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON, buttonmap[i].s_x, buttonmap[i].s_y, buttonmap[i].s_width, buttonmap[i].s_height, hWnd, (HMENU) buttonmap[i].buttonnum, NULL, NULL);
-       
-   }
-
-   //Boîte de texte qu'on peut éditer
-   HWND entry;
-   entry = CreateWindowA("Edit", "Saisissez votre message ici", WS_TABSTOP | WS_VISIBLE | WS_CHILD | WS_BORDER, 850, 580, 360, 80, hWnd, NULL, NULL, NULL);
-
-   ////
    if (!hWnd)
    {
       return FALSE;
@@ -172,6 +120,36 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    UpdateWindow(hWnd);
 
    return TRUE;
+}
+
+void AddButtons(HWND hWnd)
+{
+    //Tableau des boutons de l'interface
+    HWND buttons[3];
+
+    //Struct pour les paramètres du bouton
+    struct buttonsetup
+    {
+        int s_x = 0; /*Position X du bouton*/
+        int s_y = 0; /*Position Y du bouton*/
+        int s_width = 0; /*Longueur du bouton*/
+        int s_height = 0; /*Largeur du bouton*/
+        const char* title = " "; /*Texte inscrit sur le bouton*/
+        int buttonnum = 0; /*Numéro du bouton*/
+    };
+
+    buttonsetup buttonmap[3];
+    buttonmap[0] = { 180, 180, 180, 40, "Charger un fichier bitmap", OPEN_FILE_BUTTON }; /*Charger un fichier bitmap*/
+    buttonmap[1] = { 1250, 580, 150, 40, "Cacher le message", HIDE_MESSAGE_BUTTON }; /*Cacher le message*/
+    buttonmap[2] = { 600, 600, 150, 40, "Extraire le message", EXTRACT_MESSAGE_BUTTON }; /*Extraire le message*/
+
+    for (int i = 0; i < 3; i++)
+    {
+
+        buttons[i] = CreateWindowA("Button", buttonmap[i].title, WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON, buttonmap[i].s_x, buttonmap[i].s_y, buttonmap[i].s_width, buttonmap[i].s_height, hWnd, (HMENU)buttonmap[i].buttonnum, NULL, NULL);
+
+    }
+    return;
 }
 
 BOOL UpdateInstance(HINSTANCE hInstance, int nCmdShow)
@@ -193,12 +171,63 @@ BOOL UpdateInstance(HINSTANCE hInstance, int nCmdShow)
     return TRUE;
 }
 
-void UpdateText(HWND hWnd)
+//Permet d'ouvrir une fenêtre pour chercher une bitmap
+int OpenFile(HWND hWnd)
 {
 
+    OPENFILENAMEA ofn;
+    char file_name [700] = " ";
+
+    ZeroMemory(&ofn, sizeof(OPENFILENAMEA));
+
+    ofn.lStructSize = sizeof(OPENFILENAMEA);
+    ofn.hwndOwner = hWnd;
+    ofn.lpstrFile = file_name;
+    ofn.lpstrFile[0] = '\0';
+    ofn.nMaxFile = sizeof(file_name);
+    ofn.lpstrFilter = "Bitmap Files\0*.BMP\0All Files\0*.*\0";  // Types de fichiers à filtrer
+    ofn.nFilterIndex = 1;   // Index de départ des filtres (commence à 1)
+    ofn.lpstrFileTitle = NULL;
+    ofn.nMaxFileTitle = 0;
+    ofn.lpstrInitialDir = NULL;  // Dossier initial (NULL pour le dossier actuel)
+    ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;  // Options (doit exister)
+
+    // Affiche la boîte de dialogue "Ouvrir"
+    if (GetOpenFileNameA(&ofn) == TRUE) {
+        
+        hbitmap = (HBITMAP)LoadImageA(NULL, file_name, IMAGE_BITMAP, 600, 600, LR_LOADFROMFILE);
+
+        if (hbitmap == NULL) 
+        {
+            MessageBox(hWnd, L"Erreur de chargement du bitmap!", L"Erreur", MB_OK | MB_ICONERROR);
+        }
+        else
+        {
+            MessageBox(hWnd, L"Erreur de chargement du bitmap!", L"Erreur", MB_OK | MB_ICONINFORMATION);
+        }
+    }
+    else 
+    {
+        MessageBox(hWnd, L"Fermeture de la boîte de dialogue", L"Erreur", MB_OK | MB_ICONERROR);
+    }
+
+    return 0;
 }
 
+int ExtractMessage(HWND hWnd)
+{
+    return 0;
+}
 
+int HideMessage(HWND hWnd)
+{
+    return 0;
+}
+
+void WriteLog()
+{
+    return;
+}
 
 //
 //  FONCTION : WndProc(HWND, UINT, WPARAM, LPARAM)
@@ -210,11 +239,56 @@ void UpdateText(HWND hWnd)
 //  WM_DESTROY  - génère un message d'arrêt et retourne
 //
 //
-LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 {
+
+    char buffer[250];
+    //[] nombre total de caractères que l'on peut mettre dans le tableau
+    //sizeof(buffer) => permet d'obtenir la taille/length de la variable
 
     switch (message)
     {
+
+    case WM_CREATE:
+    {
+    /*Heimanu*////
+    //Création des éléments de l'Interface Utilisateur
+
+    //CreateWindowA(
+    // Nom de la classe (voir dans la docu),
+    // Texte inscrit sur l'élément d'interface,
+    // Styles de la classe (voir dans la docu), 
+    // Position X,
+    // Position Y,
+    // Taille X,
+    // Taille Y,
+    // Parent HWND,
+    // hMenu->NULL par défaut => assigner un numéro identifiable pour WM_Command,
+    // hInstance->NULL par défaut,
+    // Ip Param->NULL par défaut
+    // );
+
+    //Background à gauche de l'écran
+        HWND l_background;
+        l_background = CreateWindowA("Static", " ", WS_TABSTOP | WS_VISIBLE | WS_CHILD | WS_BORDER, 20, 250, 550, 400, hWnd, NULL, NULL, NULL);
+
+        //Texte du message caché à gauche de l'écran
+        HWND l_text;
+        l_text = CreateWindowA("Static", "Message de l'image: ", WS_TABSTOP | WS_VISIBLE | WS_CHILD | WS_BORDER, 20, 60, 550, 40, hWnd, NULL, NULL, NULL);
+
+        //Log à droite de l'écran
+        HWND log;
+        log = CreateWindowA("Static", "LOG", WS_TABSTOP | WS_VISIBLE | WS_CHILD | WS_BORDER | WS_VSCROLL, 850, 150, 550, 380, hWnd, NULL, NULL, NULL);
+
+        //Boîte de texte qu'on peut éditer
+        HWND entry = 0;
+        entry = CreateWindowA("Edit", "Saisissez votre message ici", WS_TABSTOP | WS_VISIBLE | WS_CHILD | WS_BORDER, 850, 580, 360, 80, hWnd, NULL, NULL, NULL);
+
+        //Ajouts de boutons
+        AddButtons(hWnd);
+
+        break;
+    }
     case WM_COMMAND:
         {
             int wmId = LOWORD(wParam);
@@ -225,24 +299,30 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 /*Heimanu*/
                 //Déclenche un event lorsque le joueur appuie sur un bouton créé dans InitInstance()
 
-            case 1: /*Charger un fichier bitmap*/
-                MessageBox(hWnd, L"Test", L"Test", 0);
+            case OPEN_FILE_BUTTON: /*Charger un fichier bitmap*/
+                OpenFile(hWnd);
                 break;
-            case 2: /*Cacher le message*/
-                MessageBox(hWnd, L"Test", L"Test", 0);
+            case HIDE_MESSAGE_BUTTON: /*Cacher le message*/
+                HideMessage();
                 break;
-            case 3: /*Extraire le message*/
+            case EXTRACT_MESSAGE_BUTTON: /*Extraire le message*/
                 MessageBox(hWnd, L"Test", L"Test", 0);
+                ExtractMessage();
                 break;
 
                 ////////////////////////////////
+
             case IDM_ABOUT:
                 DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
+
                 break;
             case IDM_EXIT:
                 DestroyWindow(hWnd);
+
                 break;
+
             default:
+
                 return DefWindowProc(hWnd, message, wParam, lParam);
             }
         }
@@ -252,7 +332,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         {
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hWnd, &ps);
-            // TODO: Ajoutez ici le code de dessin qui utilise hdc...
+
             EndPaint(hWnd, &ps);
         }
         break;
@@ -260,10 +340,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         PostQuitMessage(0);
         break;
 
-    case WM_CREATE:
-    {
-        break;
-    }
     default:
         return DefWindowProc(hWnd, message, wParam, lParam);
     }
