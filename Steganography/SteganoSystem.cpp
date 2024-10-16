@@ -41,8 +41,10 @@ bool SteganoSystem::HideMessage(Bitmap& bmp, const std::string& message)
 	return false;
 }
 
-std::string SteganoSystem::FindMessage()
+std::string SteganoSystem::FindMessage(Gdiplus::Bitmap& bmp)
 {
-	return std::string();
+	std::string message;
+	m_algo->FindMessage(bmp, message);
+	return message;
 }
 

@@ -82,8 +82,7 @@ bool SteganoAlgoLSB::FindMessage(Gdiplus::Bitmap& bmp, std::string& message)
 	ParseImage();
 	LSBAlgoReverse(message);
 
-
-	return false;
+	return message != "";
 }
 
 void SteganoAlgoLSB::ParseImage()
@@ -152,7 +151,6 @@ void SteganoAlgoLSB::UnparseImage()
 void SteganoAlgoLSB::LSBAlgo(const char* message)
 {
 	int length = strlen(message);
-	int bitModified = 0;
 	for (int i = 0; i < length; i++)
 	{
 		const char letter = message[i];
@@ -168,7 +166,6 @@ void SteganoAlgoLSB::LSBAlgo(const char* message)
 			{
 				(*m_imageBytesRGB)[index] &= ~(1 << 0);
 			}
-			bitModified++;
 		}
 	}
 	return;
@@ -176,8 +173,26 @@ void SteganoAlgoLSB::LSBAlgo(const char* message)
 
 void SteganoAlgoLSB::LSBAlgoReverse(std::string& message)
 {
-	//for (int i = 0; i < m_imageBytesRGB; i++)
-	//{
-
-	//}
+	message = "";
+	for (int i = 0; (i + 8) < m_imageBytesRGB->size(); i+=8)
+	{
+		char letter = 0;
+		for (int j = 0; j < 8; j++)
+		{
+			bool isBitTrue = (*m_imageBytesRGB)[i + j] & (1 << 0);
+			if (isBitTrue)
+			{
+				letter |= 1 << j;
+			}
+			else
+			{
+				letter &= ~(1 << j);
+			}
+		}
+		if ((letter >= 'a' && letter <= 'z') || (letter >= 'A' && letter <= 'Z') || letter == ' ')
+		{
+			message += letter;
+		}
+	}
+	return;
 }

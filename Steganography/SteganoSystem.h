@@ -20,7 +20,7 @@ public:
 	static SteganoSystem* GetInstance();
 
 	bool HideMessage(Gdiplus::Bitmap& bmp, const std::string& message);
-	std::string FindMessage();
+	std::string FindMessage(Gdiplus::Bitmap& bmp);
 
 };
 

@@ -33,10 +33,13 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     ULONG_PTR gdiplusToken;
     Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
 
-    Gdiplus::Bitmap* bmp = 
-        new Gdiplus::Bitmap(L"Images/Facebook_logo_(square).png");
-    SteganoSystem::GetInstance()->HideMessage(*bmp, "dqslkjdhfq");
+    Gdiplus::Bitmap* bmpToHide = 
+        new Gdiplus::Bitmap(L"Images/Quest.png");
+    SteganoSystem::GetInstance()->HideMessage(*bmpToHide, "Bonjour Je suis le, message");
 
+    Gdiplus::Bitmap* bmpToFind =
+        new Gdiplus::Bitmap(L"Images/FileChanged.png");
+    std::string message =  SteganoSystem::GetInstance()->FindMessage(*bmpToFind);
 
     
     // Initialise les chaînes globales
