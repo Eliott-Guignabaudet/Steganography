@@ -1,66 +1,12 @@
 #include <iostream>
 #include <string>
+#include "CLSIDEncoder.h"
+
 #include <objidl.h>
 #include <gdiplus.h>
-#include <gdiplusheaders.h>
 #include "SteganoAlgoLSB.h"
 
 
-HRESULT GetGdiplusEncoderClsid(const std::wstring& format, GUID* pGuid)
-{
-	HRESULT hr = S_OK;
-	UINT  nEncoders = 0;          // number of image encoders
-	UINT  nSize = 0;              // size of the image encoder array in bytes
-	std::vector<BYTE> spData;
-	Gdiplus::ImageCodecInfo* pImageCodecInfo = NULL;
-	Gdiplus::Status status;
-	bool found = false;
-
-	if (format.empty() || !pGuid)
-	{
-		hr = E_INVALIDARG;
-	}
-
-	if (SUCCEEDED(hr))
-	{
-		*pGuid = GUID_NULL;
-		status = Gdiplus::GetImageEncodersSize(&nEncoders, &nSize);
-
-		if ((status != Gdiplus::Ok) || (nSize == 0))
-		{
-			hr = E_FAIL;
-		}
-	}
-
-	if (SUCCEEDED(hr))
-	{
-
-		spData.resize(nSize);
-		pImageCodecInfo = (Gdiplus::ImageCodecInfo*)&spData.front();
-		status = Gdiplus::GetImageEncoders(nEncoders, nSize, pImageCodecInfo);
-
-		if (status != Gdiplus::Ok)
-		{
-			hr = E_FAIL;
-		}
-	}
-
-	if (SUCCEEDED(hr))
-	{
-		for (UINT j = 0; j < nEncoders && !found; j++)
-		{
-			if (pImageCodecInfo[j].MimeType == format)
-			{
-				*pGuid = pImageCodecInfo[j].Clsid;
-				found = true;
-			}
-		}
-
-		hr = found ? S_OK : E_FAIL;
-	}
-
-	return hr;
-}
 
 
 
@@ -70,9 +16,10 @@ void SteganoAlgoLSB::HideMessage(Gdiplus::Bitmap& bmp, const std::string& messag
 	ParseImage();
 	LSBAlgo(message.c_str());
 	UnparseImage();
-	GUID guidPng = {};
-	GetGdiplusEncoderClsid(L"image/png", &guidPng);
-	m_bmp->Save(L"Images/FileChanged.png", &guidPng, NULL);
+	CLSID clsidPng;
+	//CLSIDFromString(L"{557CF406-1A04-11D3-9A73-0000F81EF32E}", &guidPng);
+	CLSIDEncoder::GetEncoderClsid(L"image/png", &clsidPng);
+	m_bmp->Save(L"Images/FileChanged.png", &clsidPng, NULL);
 	std::cout << "Hide message LSB" << std::endl;
 }
 

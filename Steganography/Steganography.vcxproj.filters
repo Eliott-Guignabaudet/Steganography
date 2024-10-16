@@ -60,6 +60,9 @@
     <ClInclude Include="SteganoAlgoLSB.h">
       <Filter>Fichiers d%27en-tête\Steganography</Filter>
     </ClInclude>
+    <ClInclude Include="CLSIDEncoder.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Steganography.cpp">
@@ -86,6 +89,9 @@
     <ClCompile Include="SteganoAlgoLSB.cpp">
       <Filter>Fichiers sources\Steganography</Filter>
     </ClCompile>
+    <ClCompile Include="CLSIDEncoder.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Steganography.rc">
@@ -99,8 +105,5 @@
     <Image Include="Steganography.ico">
       <Filter>Fichiers de ressources</Filter>
     </Image>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="html1.htm" />
   </ItemGroup>
 </Project>

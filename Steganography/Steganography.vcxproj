@@ -131,6 +131,7 @@
   <ItemGroup>
     <ClInclude Include="ASteganoAlgo.h" />
     <ClInclude Include="Button.h" />
+    <ClInclude Include="CLSIDEncoder.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="ImageLoader.h" />
     <ClInclude Include="InputField.h" />
@@ -144,6 +145,7 @@
   <ItemGroup>
     <ClCompile Include="ASteganoAlgo.cpp" />
     <ClCompile Include="Button.cpp" />
+    <ClCompile Include="CLSIDEncoder.cpp" />
     <ClCompile Include="ImageLoader.cpp" />
     <ClCompile Include="InputField.cpp" />
     <ClCompile Include="MainWindow.cpp" />
