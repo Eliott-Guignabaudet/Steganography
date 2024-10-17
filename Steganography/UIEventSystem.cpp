@@ -12,13 +12,13 @@ UIEventSystem* UIEventSystem::GetInstance()
 }
 
 void UIEventSystem::RegisterFoMessage(
-   UINT message,  std::function<void(EventParams)> callback)
+   UINT message,  std::function<LRESULT(EventParams)> callback)
 {
 	m_registeredEvents[message].push_back(callback);
 }
 
 void UIEventSystem::UnregisterForMessage(
-    UINT message,  std::function<void(EventParams)> callback)
+    UINT message,  std::function<LRESULT(EventParams)> callback)
 {
 
 }
@@ -29,7 +29,8 @@ HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
     char buffer[250];
 	auto& registeredEvents = s_instance->m_registeredEvents;
-	if (registeredEvents.find(message) == registeredEvents.end())
+	if (registeredEvents.find(message) == registeredEvents.end() 
+		|| registeredEvents[message].size() == 0)
 	{
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
@@ -44,8 +45,14 @@ HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			params.message = message;
 			params.wParam = wParam;
 			params.lParam = lParam;
-			function(params);
+			if (message == WM_CREATE)
+			{
+				function(params);
+				continue;
+			}
+			return function(params);
 		}
 	}
-	return 0;
+
+	return DefWindowProc(hWnd, message, wParam, lParam);
 }

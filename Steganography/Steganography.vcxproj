@@ -132,6 +132,7 @@
     <ClInclude Include="ASteganoAlgo.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="CLSIDEncoder.h" />
+    <ClInclude Include="ThemeSystem.h" />
     <ClInclude Include="UIEventSystem.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="ImageLoader.h" />
@@ -147,6 +148,7 @@
     <ClCompile Include="ASteganoAlgo.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="CLSIDEncoder.cpp" />
+    <ClCompile Include="ThemeSystem.cpp" />
     <ClCompile Include="UIEventSystem.cpp" />
     <ClCompile Include="ImageLoader.cpp" />
     <ClCompile Include="InputField.cpp" />

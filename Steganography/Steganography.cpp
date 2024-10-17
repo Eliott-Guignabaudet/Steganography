@@ -91,7 +91,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     LoadStringW(hInstance, IDC_STEGANOGRAPHY, mainWin.m_szWindowClass, MAX_LOADSTRING);
 
     UIEventSystem::GetInstance();
-    //return mainWin.Run(hInstance, nCmdShow);
+    return mainWin.Run(hInstance, nCmdShow);
     MyRegisterClass(hInstance);
 
     // Effectue l'initialisation de l'application :

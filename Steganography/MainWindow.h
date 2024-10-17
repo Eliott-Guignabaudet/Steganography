@@ -10,10 +10,10 @@ public:
 	void RegisterForEvents();
 
 #pragma region Events
-	std::function<void(EventParams)> OnCreate;
-	std::function<void(EventParams)> OnEventCommand;
-	std::function<void(EventParams)> OnEventPaint;
-	std::function<void(EventParams)> OnEventDestroy;
+	std::function<LRESULT(EventParams)> OnCreate;
+	std::function<LRESULT(EventParams)> OnEventCommand;
+	std::function<LRESULT(EventParams)> OnEventPaint;
+	std::function<LRESULT(EventParams)> OnEventDestroy;
 #pragma endregion
 
 	WCHAR m_szTitle[100];
@@ -35,10 +35,10 @@ private:
 	WCHAR* m_imagePath;
 
 #pragma region Event Handlers
-	void HandleCreateEvent(EventParams params);
-	void HandleCommandEvent(EventParams params);
-	void HandlePaintEvent(EventParams params);
-	void HandleDestroyEvent(EventParams params);
+	LRESULT HandleCreateEvent(EventParams params);
+	LRESULT HandleCommandEvent(EventParams params);
+	LRESULT HandlePaintEvent(EventParams params);
+	LRESULT HandleDestroyEvent(EventParams params);
 #pragma endregion
 
 	void AddButtons(HWND hwnd);

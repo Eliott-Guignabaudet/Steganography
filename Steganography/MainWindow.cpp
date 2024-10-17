@@ -9,7 +9,7 @@
 #include "ImageLoader.h"
 #include "SteganoSystem.h"
 #include "CLSIDEncoder.h"
-
+#include "ThemeSystem.h"
 
 using namespace std::placeholders;
 using namespace Gdiplus;
@@ -19,6 +19,9 @@ int MainWindow::Run(HINSTANCE hInstance, int  nCmdShow)
 {
 
 	RegisterForEvents();
+    ThemeSystem thmSys;
+    thmSys.Init();
+
     m_imgLoader = new ImageLoader();
     ATOM result = MyRegisterClass(hInstance);
 
@@ -62,7 +65,7 @@ void MainWindow::RegisterForEvents()
     UIEventSystem::GetInstance()->RegisterFoMessage(WM_DESTROY, OnEventDestroy);
 }
 
-void MainWindow::HandleCreateEvent(EventParams params)
+LRESULT MainWindow::HandleCreateEvent(EventParams params)
 {
 	m_imageZone = CreateWindowA("Static", " ", WS_TABSTOP | WS_VISIBLE | WS_CHILD | WS_BORDER, 20, 250, 550, 400, params.hWnd, NULL, NULL, NULL);
 	m_logWidowElement = CreateWindowA("Static", "Message de l'image: ", WS_TABSTOP | WS_VISIBLE | WS_CHILD | WS_BORDER, 20, 60, 550, 40, params.hWnd, NULL, NULL, NULL);
@@ -70,9 +73,11 @@ void MainWindow::HandleCreateEvent(EventParams params)
 	m_messageInputField = CreateWindowA("Edit", "Saisissez votre message ici", WS_TABSTOP | WS_VISIBLE | WS_CHILD | WS_BORDER, 850, 580, 360, 80, params.hWnd, NULL, NULL, NULL);
 
 	AddButtons(params.hWnd);
+    return DefWindowProc(params.hWnd, params.message, params.wParam, params.lParam);
+
 }
 
-void MainWindow::HandleCommandEvent(EventParams params)
+LRESULT MainWindow::HandleCommandEvent(EventParams params)
 {
     int wmId = LOWORD(params.wParam);
 
@@ -105,11 +110,11 @@ void MainWindow::HandleCommandEvent(EventParams params)
 
     default:
 
-        DefWindowProc(params.hWnd, params.message, params.wParam, params.lParam);
+        return DefWindowProc(params.hWnd, params.message, params.wParam, params.lParam);
     }
 }
 
-void MainWindow::HandlePaintEvent(EventParams params)
+LRESULT MainWindow::HandlePaintEvent(EventParams params)
 {
     PAINTSTRUCT ps;
     HDC hdc = BeginPaint(m_hWnd, &ps);
@@ -126,12 +131,14 @@ void MainWindow::HandlePaintEvent(EventParams params)
         graphics.DrawImage(m_imgLoader->GetPictureToDisplay(), myrect);
     }
     EndPaint(m_imageZone, &ps);
+    return DefWindowProc(params.hWnd, params.message, params.wParam, params.lParam);
+
 }
 
-void MainWindow::HandleDestroyEvent(EventParams params)
+LRESULT MainWindow::HandleDestroyEvent(EventParams params)
 {
     PostQuitMessage(0);
-    return;
+    return DefWindowProc(params.hWnd, params.message, params.wParam, params.lParam);
 }
 
 void MainWindow::AddButtons(HWND hwnd)
@@ -158,7 +165,7 @@ void MainWindow::AddButtons(HWND hwnd)
     for (int i = 0; i < 3; i++)
     {
 
-        buttons[i] = CreateWindowA("Button", buttonmap[i].title, WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON, buttonmap[i].s_x, buttonmap[i].s_y, buttonmap[i].s_width, buttonmap[i].s_height, hwnd, (HMENU)buttonmap[i].buttonnum, NULL, NULL);
+        buttons[i] = CreateWindowA("Button", buttonmap[i].title, WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON , buttonmap[i].s_x, buttonmap[i].s_y, buttonmap[i].s_width, buttonmap[i].s_height, hwnd, (HMENU)buttonmap[i].buttonnum, NULL, NULL);
 
     }
     return;
@@ -170,7 +177,7 @@ ATOM MainWindow::MyRegisterClass(HINSTANCE hInstance)
 
     wcex.cbSize = sizeof(WNDCLASSEX);
 
-    wcex.style = CS_HREDRAW | CS_VREDRAW;
+    wcex.style = CS_HREDRAW | CS_VREDRAW ;
     wcex.lpfnWndProc = UIEventSystem::HandleMessages;
     wcex.cbClsExtra = 0;
     wcex.cbWndExtra = 0;
