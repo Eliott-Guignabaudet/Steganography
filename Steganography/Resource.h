@@ -18,6 +18,7 @@
 #define ID_EXPORTERUNFICHIER_EXPORTEREN32774 32774
 #define ID_EXPORTERUNFICHIER_EXPORTEREN32775 32775
 #define OPEN_FILE_BUTTON                32777
+#define ID_FICHIER_EXPORTERUNFICHIER32781 32781
 #define IDC_STATIC                      -1
 
 // Next default values for new objects
@@ -26,7 +27,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        129
-#define _APS_NEXT_COMMAND_VALUE         32779
+#define _APS_NEXT_COMMAND_VALUE         32784
 #define _APS_NEXT_CONTROL_VALUE         1000
 #define _APS_NEXT_SYMED_VALUE           110
 #endif

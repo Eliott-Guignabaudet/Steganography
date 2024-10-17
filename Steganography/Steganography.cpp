@@ -21,7 +21,6 @@ WCHAR szWindowClass[MAX_LOADSTRING];            // nom de la classe de fenêtre 
 //Déclaration d'un handle bitmap pour charger une image
 HBITMAP hbitmap = NULL;
 
-
 // Déclarations anticipées des fonctions incluses dans ce module de code :
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
@@ -317,11 +316,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
                 ////////////////////////////////
 
-            case IDM_ABOUT:
-                DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
-
+            //Heimanu
+            //Raccourcis et boutons de la barre
+            case ID_FICHIER_IMPORTERUNFICHIER: //ALT + V: Import d'un fichier
+                OpenFile(hWnd);
                 break;
-            case IDM_EXIT:
+
+            case ID_FICHIER_EXPORTERUNFICHIER: //ALT + B: Export d'un fichier
+                OpenFile(hWnd);
+                break;
+
+
+            case IDM_ABOUT: //ALT + /: Informations à propos du programme
+                DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
+                break;
+
+            case IDM_EXIT: //ALT + F4: Fin du programme
                 DestroyWindow(hWnd);
 
                 break;
