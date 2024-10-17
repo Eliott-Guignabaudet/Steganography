@@ -13,14 +13,13 @@
 
 using namespace std::placeholders;
 using namespace Gdiplus;
-LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 int MainWindow::Run(HINSTANCE hInstance, int  nCmdShow)
 {
 
 	RegisterForEvents();
     ThemeSystem thmSys;
-    thmSys.Init();
+    thmSys.Init(m_hWnd);
 
     m_imgLoader = new ImageLoader();
     ATOM result = MyRegisterClass(hInstance);

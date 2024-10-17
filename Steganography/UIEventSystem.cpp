@@ -45,7 +45,7 @@ HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			params.message = message;
 			params.wParam = wParam;
 			params.lParam = lParam;
-			if (message == WM_CREATE)
+			if (message == WM_CREATE || message == WM_COMMAND)
 			{
 				function(params);
 				continue;

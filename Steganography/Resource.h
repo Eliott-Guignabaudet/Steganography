@@ -20,6 +20,7 @@
 #define OPEN_FILE_BUTTON 1
 #define HIDE_MESSAGE_BUTTON 2
 #define EXTRACT_MESSAGE_BUTTON 3
+#define CHANGE_THEME_BUTTON 4
 // Valeurs par défaut suivantes des nouveaux objets
 //
 #ifdef APSTUDIO_INVOKED
