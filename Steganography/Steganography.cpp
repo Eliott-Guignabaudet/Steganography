@@ -32,7 +32,7 @@ HBITMAP hbitmap = NULL;
 // Déclarations anticipées des fonctions incluses dans ce module de code :
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
-void                Export(Bitmap* bmp);
+void                Export(Bitmap* bmp, HWND hWnd);
 //New
 /////
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
@@ -307,16 +307,15 @@ void HideMessage(HWND hWnd)
 
     SteganoSystem::GetInstance()->HideMessage(*bmp, message_str);
 
-    Export(bmp);
+    Export(bmp,hWnd);
 
 
 
     return;
 }
 
-void Export(Bitmap* bmp) {
+void Export(Bitmap* bmp, HWND hWnd) {
 
-    char file_name[700] = " ";
     char path[MAX_PATH] = " ";
 
     // Définir la structure BROWSEINFO
@@ -327,13 +326,10 @@ void Export(Bitmap* bmp) {
     LPITEMIDLIST pidlist = SHBrowseForFolder(&bi);
     if (pidlist) {
 
-
         // Récupérer le chemin à partir de l'ID list
-        if (SHGetPathFromIDListA(pidlist, path)) {
-            printf("Le chemin du dossier sélectionné est : %s\n", path);
-        }
-        else {
-            printf("Erreur lors de la récupération du chemin.\n");
+        if (SHGetPathFromIDListA(pidlist, path) == false) {
+            MessageBox(hWnd, L"No picture loaded", L"Erreur", MB_OK | MB_ICONERROR);
+            return;
         }
 
         // Libérer la mémoire
