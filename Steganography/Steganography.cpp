@@ -20,6 +20,8 @@
 #define HIDE_MESSAGE_BUTTON 2
 #define EXTRACT_MESSAGE_BUTTON 3
 
+
+
 // Variables globales :
 HINSTANCE hInst;                                // instance actuelle
 WCHAR szTitle[MAX_LOADSTRING];                  // Texte de la barre de titre
@@ -27,7 +29,6 @@ WCHAR szWindowClass[MAX_LOADSTRING];            // nom de la classe de fenêtre 
 
 //Déclaration d'un handle bitmap pour charger une image
 HBITMAP hbitmap = NULL;
-
 
 // Déclarations anticipées des fonctions incluses dans ce module de code :
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -172,7 +173,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 void AddButtons(HWND hWnd)
 {
     //Tableau des boutons de l'interface
-    HWND buttons[3];
+    HWND buttons[4];
 
     //Struct pour les paramètres du bouton
     struct buttonsetup
@@ -185,19 +186,22 @@ void AddButtons(HWND hWnd)
         int buttonnum = 0; /*Numéro du bouton*/
     };
 
-    buttonsetup buttonmap[3];
-    buttonmap[0] = { 180, 180, 180, 40, "Charger un fichier bitmap", OPEN_FILE_BUTTON }; /*Charger un fichier bitmap*/
-    buttonmap[1] = { 1250, 580, 150, 40, "Cacher le message", HIDE_MESSAGE_BUTTON }; /*Cacher le message*/
-    buttonmap[2] = { 600, 600, 150, 40, "Extraire le message", EXTRACT_MESSAGE_BUTTON }; /*Extraire le message*/
+    buttonsetup buttonmap[4];
+    buttonmap[0] = { 80, 10, 250, 40, "Importer un fichier", ID_FICHIER_IMPORTERUNFICHIER }; /*Charger un fichier bitmap*/
+    buttonmap[1] = { 1125, 560, 210, 40, "Cacher et exporter le message", HIDE_MESSAGE_BUTTON }; /*Cacher le message*/
+    buttonmap[2] = { 500, 560, 150, 40, "Extraire le message", EXTRACT_MESSAGE_BUTTON }; /*Extraire le message*/
+    buttonmap[3] = { 80, 60, 250, 40, "Exporter un fichier", ID_FICHIER_EXPORTERUNFICHIER };
 
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < 4; i++)
     {
 
         buttons[i] = CreateWindowA("Button", buttonmap[i].title, WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON, buttonmap[i].s_x, buttonmap[i].s_y, buttonmap[i].s_width, buttonmap[i].s_height, hWnd, (HMENU)buttonmap[i].buttonnum, NULL, NULL);
 
     }
     return;
+
 }
+
 
 BOOL UpdateInstance(HINSTANCE hInstance, int nCmdShow)
 {
@@ -232,7 +236,7 @@ int OpenFile(HWND hWnd)
     ofn.lpstrFile = file_name;
     ofn.lpstrFile[0] = '\0';
     ofn.nMaxFile = sizeof(file_name);
-    ofn.lpstrFilter = "Bitmap Files\0*.BMP\0All Files\0*.*\0";  // Types de fichiers à filtrer
+    ofn.lpstrFilter = "Bitmap Files\0*.BMP\0";  // Types de fichiers à filtrer
     ofn.nFilterIndex = 1;   // Index de départ des filtres (commence à 1)
     ofn.lpstrFileTitle = NULL;
     ofn.nMaxFileTitle = 0;
@@ -263,7 +267,7 @@ int OpenFile(HWND hWnd)
     }
     else 
     {
-        MessageBox(hWnd, L"Fermeture de la boîte de dialogue", L"Erreur", MB_OK | MB_ICONERROR);
+        
     }
 
     return 0;
@@ -403,18 +407,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
     //Background à gauche de l'écran
 
-        l_background = CreateWindowA("Static", " ", WS_TABSTOP | WS_VISIBLE | WS_CHILD | WS_BORDER, 20, 250, 550, 400, hWnd, NULL, NULL, NULL);
+        l_background = CreateWindowA("Static", " ", WS_TABSTOP | WS_VISIBLE | WS_CHILD | WS_BORDER, 80, 120, 550, 400, hWnd, NULL, NULL, NULL);
 
         //Texte du message caché à gauche de l'écran
-        l_text = CreateWindowA("Static", "Message de l'image: ", WS_TABSTOP | WS_VISIBLE | WS_CHILD | WS_BORDER, 20, 60, 550, 40, hWnd, NULL, NULL, NULL);
+        l_text = CreateWindowA("Static", "Log", WS_TABSTOP | WS_VISIBLE | WS_CHILD | WS_BORDER, 750, 120, 600, 400, hWnd, NULL, NULL, NULL);
 
         //Log à droite de l'écran
         HWND log = NULL;
 
-        l_text = CreateWindowA("Static", "LOG", WS_TABSTOP | WS_VISIBLE | WS_CHILD | WS_BORDER | WS_VSCROLL, 850, 150, 550, 380, hWnd, NULL, NULL, NULL);
+        l_text = CreateWindowA("Static", "Message de l'image", WS_TABSTOP | WS_VISIBLE | WS_CHILD | WS_BORDER | WS_VSCROLL, 80, 540, 400, 80, hWnd, NULL, NULL, NULL);
 
         //Boîte de texte qu'on peut éditer
-        entry = CreateWindowA("Edit", "Saisissez votre message ici", WS_TABSTOP | WS_VISIBLE | WS_CHILD | WS_BORDER, 850, 580, 360, 80, hWnd, NULL, NULL, NULL);
+        entry = CreateWindowA("Edit", "Saisissez votre message ici", WS_TABSTOP | WS_VISIBLE | WS_CHILD | WS_BORDER, 750, 550, 360, 80, hWnd, NULL, NULL, NULL);
 
         //Ajouts de boutons
         AddButtons(hWnd);
@@ -443,11 +447,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
                 ////////////////////////////////
 
-            case IDM_ABOUT:
-                DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
-
+            //Heimanu
+            //Raccourcis et boutons de la barre
+            case ID_FICHIER_IMPORTERUNFICHIER: //ALT + V: Import d'un fichier
+                OpenFile(hWnd);
                 break;
-            case IDM_EXIT:
+
+            case ID_FICHIER_EXPORTERUNFICHIER: //ALT + B: Export d'un fichier
+                HideMessage(hWnd);
+                break;
+
+
+            case IDM_ABOUT: //ALT + /: Informations à propos du programme
+                DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
+                break;
+
+            case IDM_EXIT: //ALT + F4: Fin du programme
                 DestroyWindow(hWnd);
 
                 break;
