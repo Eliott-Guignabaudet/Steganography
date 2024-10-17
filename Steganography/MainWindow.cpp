@@ -219,6 +219,8 @@ BOOL MainWindow::InitInstance(HINSTANCE hInstance, int nCmdShow)
 
 int MainWindow::OpenFile(HWND hWnd)
 {
+    WCHAR* imagePath;
+
     OPENFILENAMEA ofn;
     char file_name[700] = " ";
 
@@ -229,7 +231,7 @@ int MainWindow::OpenFile(HWND hWnd)
     ofn.lpstrFile = file_name;
     ofn.lpstrFile[0] = '\0';
     ofn.nMaxFile = sizeof(file_name);
-    ofn.lpstrFilter = "Bitmap Files\0*.BMP\0All Files\0*.*\0";  // Types de fichiers à filtrer
+    ofn.lpstrFilter = "Bitmap Files\0*.BMP\0PNG\0*.png";  // Types de fichiers à filtrer
     ofn.nFilterIndex = 1;   // Index de départ des filtres (commence à 1)
     ofn.lpstrFileTitle = NULL;
     ofn.nMaxFileTitle = 0;
@@ -239,27 +241,20 @@ int MainWindow::OpenFile(HWND hWnd)
     // Affiche la boîte de dialogue "Ouvrir"
     if (GetOpenFileNameA(&ofn) == TRUE) {
 
-        m_hbitmap = (HBITMAP)LoadImageA(NULL, file_name, IMAGE_BITMAP, 600, 600, LR_LOADFROMFILE);
+        const size_t file_nameSize = strlen(file_name) + 1;
+        wchar_t* file_name_wc = new wchar_t[file_nameSize];
 
-        if (m_hbitmap == NULL)
-        {
-            MessageBox(hWnd, L"Erreur de chargement du bitmap!", L"Erreur", MB_OK | MB_ICONERROR);
-        }
-        else
-        {
-            const size_t file_nameSize = strlen(file_name) + 1;
-            wchar_t* file_name_wc = new wchar_t[file_nameSize];
+        size_t outSize;
+        mbstowcs_s(&outSize, file_name_wc, file_nameSize, file_name, file_nameSize - 1);
+        imagePath = file_name_wc;
+        m_imgLoader->ConvertToBmp(file_name_wc, L"Images/bmptest.bmp");
+        RedrawWindow(hWnd, NULL, NULL, RDW_INVALIDATE | RDW_INTERNALPAINT);
+        //SendMessage(hWnd, WM_PAINT, 0, 0);
 
-            size_t outSize;
-            mbstowcs_s(&outSize, file_name_wc, file_nameSize, file_name, file_nameSize - 1);
-            m_imagePath = file_name_wc;
-            m_imgLoader->ConvertToBmp(file_name_wc, L"Images/bmptest.bmp");
-            RedrawWindow(hWnd, NULL, NULL, RDW_INVALIDATE | RDW_INTERNALPAINT);
-        }
     }
     else
     {
-        MessageBox(hWnd, L"Fermeture de la boîte de dialogue", L"Erreur", MB_OK | MB_ICONERROR);
+
     }
 
     return 0;
