@@ -10,6 +10,8 @@
 #include "SteganoSystem.h"
 #include "ImageLoader.h"
 #include "CLSIDEncoder.h"
+#include "shlobj_core.h"
+#include "string"
 
 #define MAX_LOADSTRING 100
 
@@ -30,6 +32,7 @@ HBITMAP hbitmap = NULL;
 // Déclarations anticipées des fonctions incluses dans ce module de code :
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
+void                Export(Bitmap* bmp);
 //New
 /////
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
@@ -304,12 +307,57 @@ void HideMessage(HWND hWnd)
 
     SteganoSystem::GetInstance()->HideMessage(*bmp, message_str);
 
+    Export(bmp);
+
+
+
+    return;
+}
+
+void Export(Bitmap* bmp) {
+
+    char file_name[700] = " ";
+    char path[MAX_PATH] = " ";
+
+    // Définir la structure BROWSEINFO
+    BROWSEINFO bi = { 0 };
+    bi.lpszTitle;
+
+    // Afficher la boîte de dialogue
+    LPITEMIDLIST pidlist = SHBrowseForFolder(&bi);
+    if (pidlist) {
+
+
+        // Récupérer le chemin à partir de l'ID list
+        if (SHGetPathFromIDListA(pidlist, path)) {
+            printf("Le chemin du dossier sélectionné est : %s\n", path);
+        }
+        else {
+            printf("Erreur lors de la récupération du chemin.\n");
+        }
+
+        // Libérer la mémoire
+        CoTaskMemFree(pidlist);
+    }
+    else {
+        printf("Aucun dossier sélectionné.\n");
+    }
+
+    const size_t file_nameSize = strlen(path) + 1;
+    wchar_t* file_name_wc = new wchar_t[file_nameSize];
+
+    size_t outSize;
+    mbstowcs_s(&outSize, file_name_wc, file_nameSize, path, file_nameSize - 1);
+    imagePath = file_name_wc;
+
+    std::wstring Export_File_Name = L"\\ImageExporter.";
+    std::wstring Export_File_Path = file_name_wc;
+
+    std::wstring ExportPath = Export_File_Path + Export_File_Name;
+
     CLSID clsid;
     CLSIDEncoder::GetEncoderClsid(L"image/bmp", &clsid);
-    bmp->Save(L"C:\\Users\\eguignabaudet\\source\\repos\\Steganography\\Steganography\\Images\\FileChanged.bmp", &clsid, NULL);
-
-    MessageBox(hWnd, L"Test", L"Test", 0);
-    return;
+    bmp->Save(ExportPath.c_str(), &clsid, NULL);
 }
 
 void WriteLog(HWND hwnd)
