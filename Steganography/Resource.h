@@ -16,6 +16,10 @@
 #ifndef IDC_STATIC
 #define IDC_STATIC				-1
 #endif
+
+#define OPEN_FILE_BUTTON 1
+#define HIDE_MESSAGE_BUTTON 2
+#define EXTRACT_MESSAGE_BUTTON 3
 // Valeurs par défaut suivantes des nouveaux objets
 //
 #ifdef APSTUDIO_INVOKED

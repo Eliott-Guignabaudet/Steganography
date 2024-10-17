@@ -10,13 +10,12 @@
 #include "SteganoSystem.h"
 #include "ImageLoader.h"
 #include "CLSIDEncoder.h"
+#include "UIEventSystem.h"
 
 #define MAX_LOADSTRING 100
 
 //Boutons de l'interface
-#define OPEN_FILE_BUTTON 1
-#define HIDE_MESSAGE_BUTTON 2
-#define EXTRACT_MESSAGE_BUTTON 3
+
 
 // Variables globales :
 HINSTANCE hInst;                                // instance actuelle
@@ -80,7 +79,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     ULONG_PTR gdiplusToken;
     Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
     imgLoader = new ImageLoader();
-
+    
+    UIEventSystem::GetInstance();
     
     // Initialise les chaînes globales
     LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
@@ -124,7 +124,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     wcex.cbSize = sizeof(WNDCLASSEX);
 
     wcex.style          = CS_HREDRAW | CS_VREDRAW;
-    wcex.lpfnWndProc    = WndProc;
+    wcex.lpfnWndProc    = UIEventSystem::HandleMessages;
     wcex.cbClsExtra     = 0;
     wcex.cbWndExtra     = 0;
     wcex.hInstance      = hInstance;
@@ -306,7 +306,7 @@ void HideMessage(HWND hWnd)
 
     CLSID clsid;
     CLSIDEncoder::GetEncoderClsid(L"image/bmp", &clsid);
-    bmp->Save(L"C:\\Users\\eguignabaudet\\source\\repos\\Steganography\\Steganography\\Images\\FileChanged.bmp", &clsid, NULL);
+    bmp->Save(L"C:\\Users\\eguignabaudet\\Pictures\\FileChanged2.bmp", &clsid, NULL);
 
     MessageBox(hWnd, L"Test", L"Test", 0);
     return;
