@@ -350,7 +350,7 @@ void Export(Bitmap* bmp) {
     mbstowcs_s(&outSize, file_name_wc, file_nameSize, path, file_nameSize - 1);
     imagePath = file_name_wc;
 
-    std::wstring Export_File_Name = L"\\ImageExporter.";
+    std::wstring Export_File_Name = L"\\ImageExporter.bmp";
     std::wstring Export_File_Path = file_name_wc;
 
     std::wstring ExportPath = Export_File_Path + Export_File_Name;
