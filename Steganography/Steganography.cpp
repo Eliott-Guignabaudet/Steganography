@@ -33,7 +33,7 @@ HBITMAP hbitmap = NULL;
 // Déclarations anticipées des fonctions incluses dans ce module de code :
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
-void                Export(Bitmap* bmp, HWND hWnd);
+void                Export();
 //New
 /////
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
@@ -311,53 +311,71 @@ void HideMessage(HWND hWnd)
 
     SteganoSystem::GetInstance()->HideMessage(*bmp, message_str);
 
-    Export(bmp,hWnd);
-
-
-
     return;
 }
 
-void Export(Bitmap* bmp, HWND hWnd) {
+void Export() {
+
+    Bitmap* bmp = imgLoader->GetPictureToDisplay();
 
     char path[MAX_PATH] = " ";
 
-    // Définir la structure BROWSEINFO
-    BROWSEINFO bi = { 0 };
-    bi.lpszTitle;
+    OPENFILENAMEW ofn;
+    wchar_t szFile[MAX_PATH] = L""; // Chemin du fichier
 
+    // Initialiser la structure
+    ZeroMemory(&ofn, sizeof(ofn));
+    ofn.lStructSize = sizeof(ofn); // Taille de la structure
+    ofn.hwndOwner = NULL;          // Pas de fenêtre propriétaire
+    ofn.lpstrFilter = L"bmp\0*.bmp\0png\0*.png"; // Filtre des fichiers
+    ofn.lpstrFile = szFile;        // Chemin du fichier
+    ofn.nMaxFile = sizeof(szFile); // Taille maximale du chemin
+    ofn.lpstrTitle = L"Enregistrer le fichier"; // Titre de la boîte de dialogue
+    ofn.Flags = OFN_OVERWRITEPROMPT; // Demander confirmation pour écraser un fichier
+    ofn.lpstrFileTitle;
     // Afficher la boîte de dialogue
-    LPITEMIDLIST pidlist = SHBrowseForFolder(&bi);
-    if (pidlist) {
-
-        // Récupérer le chemin à partir de l'ID list
-        if (SHGetPathFromIDListA(pidlist, path) == false) {
-            MessageBox(hWnd, L"No picture loaded", L"Erreur", MB_OK | MB_ICONERROR);
-            return;
-        }
-
-        // Libérer la mémoire
-        CoTaskMemFree(pidlist);
+    if (GetSaveFileNameW(&ofn)) {
+        // Le fichier a été sélectionné et peut être enregistré
+        MessageBoxW(NULL, szFile, L"Fichier enregistré", MB_OK);
     }
     else {
-        printf("Aucun dossier sélectionné.\n");
+        // Gestion d'erreur, par exemple afficher un message d'erreur
+        MessageBoxW(NULL, L"Erreur lors de l'enregistrement du fichier.", L"Erreur", MB_OK | MB_ICONERROR);
     }
 
-    const size_t file_nameSize = strlen(path) + 1;
-    wchar_t* file_name_wc = new wchar_t[file_nameSize];
+    const wchar_t* filter = ofn.lpstrFilter;
+    int filterIndex = ofn.nFilterIndex; // Index du filtre choisi (1 basé)
 
-    size_t outSize;
-    mbstowcs_s(&outSize, file_name_wc, file_nameSize, path, file_nameSize - 1);
-    imagePath = file_name_wc;
+    // Avancer au bon filtre
+    if (filterIndex % 2 != 0) {
+        
+    }
+    else
+    {
+        filterIndex++;
+    }
 
-    std::wstring Export_File_Name = L"\\ImageExporter.bmp";
-    std::wstring Export_File_Path = file_name_wc;
+    for (int i = 1; i < filterIndex; i++) {
+        while (*filter) {
+            filter++; // Avancer jusqu'à la fin du nom du filtre
+        }
+        filter++; // Passer le caractère NULL
+    }
 
-    std::wstring ExportPath = Export_File_Path + Export_File_Name;
+    std::wstring PathFile = szFile;
+    std::wstring PathFormat = ofn.lpstrFilter;
+
+    std::wstring Path = PathFile + L"." + filter;
+
+    std::wstring ImageFormatPrefix = L"image/";
+    std::wstring ImageFormat = ofn.lpstrFilter;
+
+    std::wstring Format = ImageFormatPrefix + ofn.lpstrFilter;
+
 
     CLSID clsid;
-    CLSIDEncoder::GetEncoderClsid(L"image/bmp", &clsid);
-    bmp->Save(ExportPath.c_str(), &clsid, NULL);
+    CLSIDEncoder::GetEncoderClsid(Format.c_str(), &clsid);
+    bmp->Save(Path.c_str(), &clsid, NULL);
 }
 
 void WriteLog(HWND hwnd)
@@ -454,7 +472,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 break;
 
             case ID_FICHIER_EXPORTERUNFICHIER: //ALT + B: Export d'un fichier
-                HideMessage(hWnd);
+                Export();
                 break;
 
 
