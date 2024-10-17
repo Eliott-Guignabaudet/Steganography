@@ -344,7 +344,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
     case WM_CREATE:
     {
-    /*Heimanu*////
     //Création des éléments de l'Interface Utilisateur
 
     //CreateWindowA(
@@ -388,7 +387,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             // Analyse les sélections de menu :
             switch (wmId)
             {
-                /*Heimanu*/
+      
                 //Déclenche un event lorsque le joueur appuie sur un bouton créé dans InitInstance()
 
             case OPEN_FILE_BUTTON: /*Charger un fichier bitmap*/
@@ -403,7 +402,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
                 ////////////////////////////////
 
-            //Heimanu
+
             //Raccourcis et boutons de la barre
             case ID_FICHIER_IMPORTERUNFICHIER: //ALT + V: Import d'un fichier
                 OpenFile(hWnd);
