@@ -10,6 +10,7 @@
 #include "SteganoSystem.h"
 #include "CLSIDEncoder.h"
 #include "ThemeSystem.h"
+#include "FilterSystem.h"
 
 using namespace std::placeholders;
 using namespace Gdiplus;
@@ -22,6 +23,8 @@ int MainWindow::Run(HINSTANCE hInstance, int  nCmdShow)
     thmSys.Init(m_hWnd);
 
     m_imgLoader = new ImageLoader();
+    m_filterSystem = new FilterSystem();
+    m_filterSystem->Init(m_hWnd, m_imgLoader);
     ATOM result = MyRegisterClass(hInstance);
 
     if (!InitInstance(hInstance, nCmdShow))
@@ -131,10 +134,10 @@ LRESULT MainWindow::HandlePaintEvent(EventParams params)
 
     Graphics graphics(hdc);
 
-    if (m_imgLoader->GetPictureToDisplay() != nullptr)
+    if (m_filterSystem->GetFilteredBitmap() != nullptr)
     {
         Rect myrect(0, 0, 550, 400);
-        graphics.DrawImage(m_imgLoader->GetPictureToDisplay(), myrect);
+        graphics.DrawImage(m_filterSystem->GetFilteredBitmap(), myrect);
     }
     EndPaint(m_imageZone, &ps);
     return DefWindowProc(params.hWnd, params.message, params.wParam, params.lParam);
@@ -248,7 +251,8 @@ int MainWindow::OpenFile(HWND hWnd)
         mbstowcs_s(&outSize, file_name_wc, file_nameSize, file_name, file_nameSize - 1);
         imagePath = file_name_wc;
         m_imgLoader->ConvertToBmp(file_name_wc, L"Images/bmptest.bmp");
-        RedrawWindow(hWnd, NULL, NULL, RDW_INVALIDATE | RDW_INTERNALPAINT);
+        m_filterSystem->SetFilter(Filter::None);
+        //RedrawWindow(hWnd, NULL, NULL, RDW_INVALIDATE | RDW_INTERNALPAINT);
         //SendMessage(hWnd, WM_PAINT, 0, 0);
 
     }
@@ -262,7 +266,8 @@ int MainWindow::OpenFile(HWND hWnd)
 
 void MainWindow::Export(HWND hWnd)
 {
-    Bitmap* bmp = m_imgLoader->GetPictureToDisplay();
+    //Bitmap* bmp = m_imgLoader->GetPictureToDisplay();
+    Bitmap* bmp = m_filterSystem->GetFilteredBitmap();
 
     if (bmp == nullptr) {
         MessageBox(hWnd, L"No picture loaded", L"Erreur", MB_OK | MB_ICONERROR);

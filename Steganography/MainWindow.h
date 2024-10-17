@@ -2,6 +2,7 @@
 #include "UIEventSystem.h"
 
 class ImageLoader;
+class FilterSystem;
 
 class MainWindow
 {
@@ -31,6 +32,7 @@ private:
 #pragma endregion
 
 	ImageLoader* m_imgLoader;
+	FilterSystem* m_filterSystem;
 	HBITMAP m_hbitmap = NULL;
 	WCHAR* m_imagePath;
 

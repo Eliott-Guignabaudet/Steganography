@@ -132,6 +132,7 @@
     <ClInclude Include="ASteganoAlgo.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="CLSIDEncoder.h" />
+    <ClInclude Include="FilterSystem.h" />
     <ClInclude Include="ThemeSystem.h" />
     <ClInclude Include="UIEventSystem.h" />
     <ClInclude Include="framework.h" />
@@ -148,6 +149,7 @@
     <ClCompile Include="ASteganoAlgo.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="CLSIDEncoder.cpp" />
+    <ClCompile Include="FilterSystem.cpp" />
     <ClCompile Include="ThemeSystem.cpp" />
     <ClCompile Include="UIEventSystem.cpp" />
     <ClCompile Include="ImageLoader.cpp" />
