@@ -168,7 +168,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 void AddButtons(HWND hWnd)
 {
     //Tableau des boutons de l'interface
-    HWND buttons[3];
+    HWND buttons[4];
 
     //Struct pour les paramètres du bouton
     struct buttonsetup
@@ -181,12 +181,13 @@ void AddButtons(HWND hWnd)
         int buttonnum = 0; /*Numéro du bouton*/
     };
 
-    buttonsetup buttonmap[3];
-    buttonmap[0] = { 180, 180, 180, 40, "Charger un fichier bitmap", ID_FICHIER_IMPORTERUNFICHIER }; /*Charger un fichier bitmap*/
-    buttonmap[1] = { 1250, 580, 150, 40, "Cacher le message", HIDE_MESSAGE_BUTTON }; /*Cacher le message*/
+    buttonsetup buttonmap[4];
+    buttonmap[0] = { 180, 180, 180, 40, "Importer un fichier", ID_FICHIER_IMPORTERUNFICHIER }; /*Charger un fichier bitmap*/
+    buttonmap[1] = { 1215, 580, 210, 40, "Cacher et exporter le message", HIDE_MESSAGE_BUTTON }; /*Cacher le message*/
     buttonmap[2] = { 600, 600, 150, 40, "Extraire le message", EXTRACT_MESSAGE_BUTTON }; /*Extraire le message*/
+    buttonmap[3] = { 180, 120, 180, 40, "Exporter un fichier", ID_FICHIER_EXPORTERUNFICHIER };
 
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < 4; i++)
     {
 
         buttons[i] = CreateWindowA("Button", buttonmap[i].title, WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON, buttonmap[i].s_x, buttonmap[i].s_y, buttonmap[i].s_width, buttonmap[i].s_height, hWnd, (HMENU)buttonmap[i].buttonnum, NULL, NULL);
@@ -405,7 +406,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 break;
 
             case ID_FICHIER_EXPORTERUNFICHIER: //ALT + B: Export d'un fichier
-                OpenFile(hWnd);
+                HideMessage(hWnd);
                 break;
 
 
