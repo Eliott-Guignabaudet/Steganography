@@ -236,7 +236,7 @@ int OpenFile(HWND hWnd)
     ofn.lpstrFile = file_name;
     ofn.lpstrFile[0] = '\0';
     ofn.nMaxFile = sizeof(file_name);
-    ofn.lpstrFilter = "Bitmap Files\0*.BMP\0";  // Types de fichiers à filtrer
+    ofn.lpstrFilter = "Bitmap Files\0*.BMP\0PNG\0*.png";  // Types de fichiers à filtrer
     ofn.nFilterIndex = 1;   // Index de départ des filtres (commence à 1)
     ofn.lpstrFileTitle = NULL;
     ofn.nMaxFileTitle = 0;
@@ -246,14 +246,6 @@ int OpenFile(HWND hWnd)
     // Affiche la boîte de dialogue "Ouvrir"
     if (GetOpenFileNameA(&ofn) == TRUE) {
         
-        hbitmap = (HBITMAP)LoadImageA(NULL, file_name, IMAGE_BITMAP, 600, 600, LR_LOADFROMFILE);
-        
-        if (hbitmap == NULL) 
-        {
-            MessageBox(hWnd, L"Erreur de chargement du bitmap!", L"Erreur", MB_OK | MB_ICONERROR);
-        }
-        else
-        {
             const size_t file_nameSize = strlen(file_name) + 1;
             wchar_t* file_name_wc = new wchar_t[file_nameSize];
             
@@ -263,7 +255,7 @@ int OpenFile(HWND hWnd)
             imgLoader->ConvertToBmp(file_name_wc, L"Images/bmptest.bmp");
             RedrawWindow(hWnd, NULL, NULL, RDW_INVALIDATE | RDW_INTERNALPAINT);
             //SendMessage(hWnd, WM_PAINT, 0, 0);
-        }
+        
     }
     else 
     {
@@ -314,9 +306,14 @@ void HideMessage(HWND hWnd)
     return;
 }
 
-void Export() {
+void Export(HWND hWnd) {
 
     Bitmap* bmp = imgLoader->GetPictureToDisplay();
+
+    if (bmp == nullptr) {
+        MessageBox(hWnd, L"No picture loaded", L"Erreur", MB_OK | MB_ICONERROR);
+        return;
+    }
 
     char path[MAX_PATH] = " ";
 
@@ -363,14 +360,30 @@ void Export() {
     }
 
     std::wstring PathFile = szFile;
-    std::wstring PathFormat = ofn.lpstrFilter;
+    std::wstring PathFormat = filter;
 
-    std::wstring Path = PathFile + L"." + filter;
+    std::wstring Path;
+
+    if(PathFile.length() > 4) {
+    
+        if (PathFile == ((PathFile.substr(0, PathFile.size() - 4)) + (L"." + PathFormat)))
+        {
+            Path = szFile;
+        }
+        else
+        {
+            Path = PathFile + L"." + PathFormat;
+        }
+
+    }
+    else
+    {
+
+    }
 
     std::wstring ImageFormatPrefix = L"image/";
-    std::wstring ImageFormat = ofn.lpstrFilter;
 
-    std::wstring Format = ImageFormatPrefix + ofn.lpstrFilter;
+    std::wstring Format = ImageFormatPrefix + PathFormat;
 
 
     CLSID clsid;
@@ -472,7 +485,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 break;
 
             case ID_FICHIER_EXPORTERUNFICHIER: //ALT + B: Export d'un fichier
-                Export();
+                Export(hWnd);
                 break;
 
 
