@@ -18,6 +18,8 @@
 #define HIDE_MESSAGE_BUTTON 2
 #define EXTRACT_MESSAGE_BUTTON 3
 
+
+
 // Variables globales :
 HINSTANCE hInst;                                // instance actuelle
 WCHAR szTitle[MAX_LOADSTRING];                  // Texte de la barre de titre
@@ -182,10 +184,10 @@ void AddButtons(HWND hWnd)
     };
 
     buttonsetup buttonmap[4];
-    buttonmap[0] = { 180, 180, 180, 40, "Importer un fichier", ID_FICHIER_IMPORTERUNFICHIER }; /*Charger un fichier bitmap*/
-    buttonmap[1] = { 1215, 580, 210, 40, "Cacher et exporter le message", HIDE_MESSAGE_BUTTON }; /*Cacher le message*/
-    buttonmap[2] = { 600, 600, 150, 40, "Extraire le message", EXTRACT_MESSAGE_BUTTON }; /*Extraire le message*/
-    buttonmap[3] = { 180, 120, 180, 40, "Exporter un fichier", ID_FICHIER_EXPORTERUNFICHIER };
+    buttonmap[0] = { 80, 10, 250, 40, "Importer un fichier", ID_FICHIER_IMPORTERUNFICHIER }; /*Charger un fichier bitmap*/
+    buttonmap[1] = { 1125, 560, 210, 40, "Cacher et exporter le message", HIDE_MESSAGE_BUTTON }; /*Cacher le message*/
+    buttonmap[2] = { 500, 560, 150, 40, "Extraire le message", EXTRACT_MESSAGE_BUTTON }; /*Extraire le message*/
+    buttonmap[3] = { 80, 60, 250, 40, "Exporter un fichier", ID_FICHIER_EXPORTERUNFICHIER };
 
     for (int i = 0; i < 4; i++)
     {
@@ -194,7 +196,9 @@ void AddButtons(HWND hWnd)
 
     }
     return;
+
 }
+
 
 BOOL UpdateInstance(HINSTANCE hInstance, int nCmdShow)
 {
@@ -229,7 +233,7 @@ int OpenFile(HWND hWnd)
     ofn.lpstrFile = file_name;
     ofn.lpstrFile[0] = '\0';
     ofn.nMaxFile = sizeof(file_name);
-    ofn.lpstrFilter = "Bitmap Files\0*.BMP\0All Files\0*.*\0";  // Types de fichiers à filtrer
+    ofn.lpstrFilter = "Bitmap Files\0*.BMP\0";  // Types de fichiers à filtrer
     ofn.nFilterIndex = 1;   // Index de départ des filtres (commence à 1)
     ofn.lpstrFileTitle = NULL;
     ofn.nMaxFileTitle = 0;
@@ -359,18 +363,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
     //Background à gauche de l'écran
 
-        l_background = CreateWindowA("Static", " ", WS_TABSTOP | WS_VISIBLE | WS_CHILD | WS_BORDER, 20, 250, 550, 400, hWnd, NULL, NULL, NULL);
+        l_background = CreateWindowA("Static", " ", WS_TABSTOP | WS_VISIBLE | WS_CHILD | WS_BORDER, 80, 120, 550, 400, hWnd, NULL, NULL, NULL);
 
         //Texte du message caché à gauche de l'écran
-        l_text = CreateWindowA("Static", "Message de l'image: ", WS_TABSTOP | WS_VISIBLE | WS_CHILD | WS_BORDER, 20, 60, 550, 40, hWnd, NULL, NULL, NULL);
+        l_text = CreateWindowA("Static", "Log", WS_TABSTOP | WS_VISIBLE | WS_CHILD | WS_BORDER, 750, 120, 600, 400, hWnd, NULL, NULL, NULL);
 
         //Log à droite de l'écran
         HWND log = NULL;
 
-        l_text = CreateWindowA("Static", "LOG", WS_TABSTOP | WS_VISIBLE | WS_CHILD | WS_BORDER | WS_VSCROLL, 850, 150, 550, 380, hWnd, NULL, NULL, NULL);
+        l_text = CreateWindowA("Static", "Message de l'image", WS_TABSTOP | WS_VISIBLE | WS_CHILD | WS_BORDER | WS_VSCROLL, 80, 540, 400, 80, hWnd, NULL, NULL, NULL);
 
         //Boîte de texte qu'on peut éditer
-        entry = CreateWindowA("Edit", "Saisissez votre message ici", WS_TABSTOP | WS_VISIBLE | WS_CHILD | WS_BORDER, 850, 580, 360, 80, hWnd, NULL, NULL, NULL);
+        entry = CreateWindowA("Edit", "Saisissez votre message ici", WS_TABSTOP | WS_VISIBLE | WS_CHILD | WS_BORDER, 750, 550, 360, 80, hWnd, NULL, NULL, NULL);
 
         //Ajouts de boutons
         AddButtons(hWnd);
