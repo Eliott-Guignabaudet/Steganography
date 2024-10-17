@@ -38,6 +38,8 @@ INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 // TODO: a retirer
 HWND l_background;
 HWND l_text;
+HWND entry = 0;
+
 ImageLoader* imgLoader;
 WCHAR* imagePath;
 
@@ -266,7 +268,12 @@ int OpenFile(HWND hWnd)
 
 void ExtractMessage(HWND hWnd)
 {
-    Bitmap* bmp = imgLoader->GetPictureToDisplay();
+    Bitmap* bmp = imgLoader->GetPictureToDisplay();    
+    if (bmp == nullptr)
+    {
+        MessageBoxW(hWnd, L"No picture loaded", L"Erreur", MB_OK | MB_ICONERROR);
+        return;
+    }
     std::string message = SteganoSystem::GetInstance()->FindMessage(*bmp);
     std::wstring widestr = std::wstring(message.begin(), message.end());
     SetWindowTextA(l_text, message.c_str());
@@ -277,8 +284,25 @@ void ExtractMessage(HWND hWnd)
 void HideMessage(HWND hWnd)
 {
     Bitmap* bmp = imgLoader->GetPictureToDisplay();
+    if (bmp == nullptr)
+    {
+        MessageBox(hWnd, L"No picture loaded", L"Erreur", MB_OK | MB_ICONERROR);
+        return;
+    }
 
-    SteganoSystem::GetInstance()->HideMessage(*bmp, MESSAGE_TO_HIDE);
+
+    int size = GetWindowTextLength(entry);
+    LPWSTR message = (LPWSTR)VirtualAlloc((LPVOID)NULL,
+        (DWORD)(size + 1), MEM_COMMIT,
+        PAGE_READWRITE);
+    GetWindowText(entry, message, size);
+    
+
+
+    std::wstring ws(message);
+    std::string message_str(ws.begin(), ws.end());
+
+    SteganoSystem::GetInstance()->HideMessage(*bmp, message_str);
 
     CLSID clsid;
     CLSIDEncoder::GetEncoderClsid(L"image/bmp", &clsid);
@@ -346,7 +370,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         l_text = CreateWindowA("Static", "LOG", WS_TABSTOP | WS_VISIBLE | WS_CHILD | WS_BORDER | WS_VSCROLL, 850, 150, 550, 380, hWnd, NULL, NULL, NULL);
 
         //Boîte de texte qu'on peut éditer
-        HWND entry = 0;
         entry = CreateWindowA("Edit", "Saisissez votre message ici", WS_TABSTOP | WS_VISIBLE | WS_CHILD | WS_BORDER, 850, 580, 360, 80, hWnd, NULL, NULL, NULL);
 
         //Ajouts de boutons
