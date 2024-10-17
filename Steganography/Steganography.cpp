@@ -11,6 +11,7 @@
 #include "ImageLoader.h"
 #include "CLSIDEncoder.h"
 #include "UIEventSystem.h"
+#include "MainWindow.h"
 
 #define MAX_LOADSTRING 100
 
@@ -79,12 +80,18 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     ULONG_PTR gdiplusToken;
     Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
     imgLoader = new ImageLoader();
+    MainWindow mainWin;
     
-    UIEventSystem::GetInstance();
+    
     
     // Initialise les chaînes globales
     LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
     LoadStringW(hInstance, IDC_STEGANOGRAPHY, szWindowClass, MAX_LOADSTRING);
+    LoadStringW(hInstance, IDS_APP_TITLE, mainWin.m_szTitle, MAX_LOADSTRING);
+    LoadStringW(hInstance, IDC_STEGANOGRAPHY, mainWin.m_szWindowClass, MAX_LOADSTRING);
+
+    UIEventSystem::GetInstance();
+    //return mainWin.Run(hInstance, nCmdShow);
     MyRegisterClass(hInstance);
 
     // Effectue l'initialisation de l'application :
@@ -124,7 +131,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     wcex.cbSize = sizeof(WNDCLASSEX);
 
     wcex.style          = CS_HREDRAW | CS_VREDRAW;
-    wcex.lpfnWndProc    = UIEventSystem::HandleMessages;
+    wcex.lpfnWndProc    = WndProc;
     wcex.cbClsExtra     = 0;
     wcex.cbWndExtra     = 0;
     wcex.hInstance      = hInstance;

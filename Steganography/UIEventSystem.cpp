@@ -31,7 +31,7 @@ HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	auto& registeredEvents = s_instance->m_registeredEvents;
 	if (registeredEvents.find(message) == registeredEvents.end())
 	{
-		return 0;
+		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
 
 	for (int i = 0; i < s_instance->m_registeredEvents[message].size(); i++)
