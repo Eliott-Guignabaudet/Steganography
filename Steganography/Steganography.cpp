@@ -16,13 +16,6 @@
 
 #define MAX_LOADSTRING 100
 
-//Boutons de l'interface
-#define OPEN_FILE_BUTTON 1
-#define HIDE_MESSAGE_BUTTON 2
-#define EXTRACT_MESSAGE_BUTTON 3
-
-
-
 // Variables globales :
 HINSTANCE hInst;                                // instance actuelle
 WCHAR szTitle[MAX_LOADSTRING];                  // Texte de la barre de titre
