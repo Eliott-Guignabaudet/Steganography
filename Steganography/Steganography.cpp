@@ -26,7 +26,6 @@ WCHAR szWindowClass[MAX_LOADSTRING];            // nom de la classe de fenêtre 
 //Déclaration d'un handle bitmap pour charger une image
 HBITMAP hbitmap = NULL;
 
-
 // Déclarations anticipées des fonctions incluses dans ce module de code :
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
@@ -183,7 +182,7 @@ void AddButtons(HWND hWnd)
     };
 
     buttonsetup buttonmap[3];
-    buttonmap[0] = { 180, 180, 180, 40, "Charger un fichier bitmap", OPEN_FILE_BUTTON }; /*Charger un fichier bitmap*/
+    buttonmap[0] = { 180, 180, 180, 40, "Charger un fichier bitmap", ID_FICHIER_IMPORTERUNFICHIER }; /*Charger un fichier bitmap*/
     buttonmap[1] = { 1250, 580, 150, 40, "Cacher le message", HIDE_MESSAGE_BUTTON }; /*Cacher le message*/
     buttonmap[2] = { 600, 600, 150, 40, "Extraire le message", EXTRACT_MESSAGE_BUTTON }; /*Extraire le message*/
 
@@ -260,7 +259,7 @@ int OpenFile(HWND hWnd)
     }
     else 
     {
-        MessageBox(hWnd, L"Fermeture de la boîte de dialogue", L"Erreur", MB_OK | MB_ICONERROR);
+        
     }
 
     return 0;
@@ -399,11 +398,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
                 ////////////////////////////////
 
-            case IDM_ABOUT:
-                DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
-
+            //Heimanu
+            //Raccourcis et boutons de la barre
+            case ID_FICHIER_IMPORTERUNFICHIER: //ALT + V: Import d'un fichier
+                OpenFile(hWnd);
                 break;
-            case IDM_EXIT:
+
+            case ID_FICHIER_EXPORTERUNFICHIER: //ALT + B: Export d'un fichier
+                OpenFile(hWnd);
+                break;
+
+
+            case IDM_ABOUT: //ALT + /: Informations à propos du programme
+                DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
+                break;
+
+            case IDM_EXIT: //ALT + F4: Fin du programme
                 DestroyWindow(hWnd);
 
                 break;
