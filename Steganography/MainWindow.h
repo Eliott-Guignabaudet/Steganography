@@ -46,6 +46,7 @@ private:
 	BOOL InitInstance(HINSTANCE hInstance, int nCmdShow);
 
 	int OpenFile(HWND hwnd);
+	void Export(HWND hWnd);
 	void HideMessage(HWND hwnd);
 	void ExtractMessage(HWND hwnd);
 

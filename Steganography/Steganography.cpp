@@ -10,12 +10,17 @@
 #include "SteganoSystem.h"
 #include "ImageLoader.h"
 #include "CLSIDEncoder.h"
-#include "UIEventSystem.h"
+#include "shlobj_core.h"
+#include "string"
 #include "MainWindow.h"
 
 #define MAX_LOADSTRING 100
 
 //Boutons de l'interface
+#define OPEN_FILE_BUTTON 1
+#define HIDE_MESSAGE_BUTTON 2
+#define EXTRACT_MESSAGE_BUTTON 3
+
 
 
 // Variables globales :
@@ -26,10 +31,10 @@ WCHAR szWindowClass[MAX_LOADSTRING];            // nom de la classe de fenêtre 
 //Déclaration d'un handle bitmap pour charger une image
 HBITMAP hbitmap = NULL;
 
-
 // Déclarations anticipées des fonctions incluses dans ce module de code :
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
+void                Export();
 //New
 /////
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
@@ -80,13 +85,12 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     ULONG_PTR gdiplusToken;
     Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
     imgLoader = new ImageLoader();
-    MainWindow mainWin;
-    
-    
+
     
     // Initialise les chaînes globales
     LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
     LoadStringW(hInstance, IDC_STEGANOGRAPHY, szWindowClass, MAX_LOADSTRING);
+    MainWindow mainWin;
     LoadStringW(hInstance, IDS_APP_TITLE, mainWin.m_szTitle, MAX_LOADSTRING);
     LoadStringW(hInstance, IDC_STEGANOGRAPHY, mainWin.m_szWindowClass, MAX_LOADSTRING);
 
@@ -176,7 +180,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 void AddButtons(HWND hWnd)
 {
     //Tableau des boutons de l'interface
-    HWND buttons[3];
+    HWND buttons[4];
 
     //Struct pour les paramètres du bouton
     struct buttonsetup
@@ -189,19 +193,22 @@ void AddButtons(HWND hWnd)
         int buttonnum = 0; /*Numéro du bouton*/
     };
 
-    buttonsetup buttonmap[3];
-    buttonmap[0] = { 180, 180, 180, 40, "Charger un fichier bitmap", OPEN_FILE_BUTTON }; /*Charger un fichier bitmap*/
-    buttonmap[1] = { 1250, 580, 150, 40, "Cacher le message", HIDE_MESSAGE_BUTTON }; /*Cacher le message*/
-    buttonmap[2] = { 600, 600, 150, 40, "Extraire le message", EXTRACT_MESSAGE_BUTTON }; /*Extraire le message*/
+    buttonsetup buttonmap[4];
+    buttonmap[0] = { 80, 10, 250, 40, "Importer un fichier", ID_FICHIER_IMPORTERUNFICHIER }; /*Charger un fichier bitmap*/
+    buttonmap[1] = { 1125, 560, 210, 40, "Cacher et exporter le message", HIDE_MESSAGE_BUTTON }; /*Cacher le message*/
+    buttonmap[2] = { 500, 560, 150, 40, "Extraire le message", EXTRACT_MESSAGE_BUTTON }; /*Extraire le message*/
+    buttonmap[3] = { 80, 60, 250, 40, "Exporter un fichier", ID_FICHIER_EXPORTERUNFICHIER };
 
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < 4; i++)
     {
 
         buttons[i] = CreateWindowA("Button", buttonmap[i].title, WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON, buttonmap[i].s_x, buttonmap[i].s_y, buttonmap[i].s_width, buttonmap[i].s_height, hWnd, (HMENU)buttonmap[i].buttonnum, NULL, NULL);
 
     }
     return;
+
 }
+
 
 BOOL UpdateInstance(HINSTANCE hInstance, int nCmdShow)
 {
@@ -236,7 +243,7 @@ int OpenFile(HWND hWnd)
     ofn.lpstrFile = file_name;
     ofn.lpstrFile[0] = '\0';
     ofn.nMaxFile = sizeof(file_name);
-    ofn.lpstrFilter = "Bitmap Files\0*.BMP\0All Files\0*.*\0";  // Types de fichiers à filtrer
+    ofn.lpstrFilter = "Bitmap Files\0*.BMP\0PNG\0*.png";  // Types de fichiers à filtrer
     ofn.nFilterIndex = 1;   // Index de départ des filtres (commence à 1)
     ofn.lpstrFileTitle = NULL;
     ofn.nMaxFileTitle = 0;
@@ -246,14 +253,6 @@ int OpenFile(HWND hWnd)
     // Affiche la boîte de dialogue "Ouvrir"
     if (GetOpenFileNameA(&ofn) == TRUE) {
         
-        hbitmap = (HBITMAP)LoadImageA(NULL, file_name, IMAGE_BITMAP, 600, 600, LR_LOADFROMFILE);
-        
-        if (hbitmap == NULL) 
-        {
-            MessageBox(hWnd, L"Erreur de chargement du bitmap!", L"Erreur", MB_OK | MB_ICONERROR);
-        }
-        else
-        {
             const size_t file_nameSize = strlen(file_name) + 1;
             wchar_t* file_name_wc = new wchar_t[file_nameSize];
             
@@ -263,11 +262,11 @@ int OpenFile(HWND hWnd)
             imgLoader->ConvertToBmp(file_name_wc, L"Images/bmptest.bmp");
             RedrawWindow(hWnd, NULL, NULL, RDW_INVALIDATE | RDW_INTERNALPAINT);
             //SendMessage(hWnd, WM_PAINT, 0, 0);
-        }
+        
     }
     else 
     {
-        MessageBox(hWnd, L"Fermeture de la boîte de dialogue", L"Erreur", MB_OK | MB_ICONERROR);
+        
     }
 
     return 0;
@@ -311,12 +310,92 @@ void HideMessage(HWND hWnd)
 
     SteganoSystem::GetInstance()->HideMessage(*bmp, message_str);
 
-    CLSID clsid;
-    CLSIDEncoder::GetEncoderClsid(L"image/bmp", &clsid);
-    bmp->Save(L"C:\\Users\\eguignabaudet\\Pictures\\FileChanged2.bmp", &clsid, NULL);
-
-    MessageBox(hWnd, L"Test", L"Test", 0);
     return;
+}
+
+void Export(HWND hWnd) {
+
+    Bitmap* bmp = imgLoader->GetPictureToDisplay();
+
+    if (bmp == nullptr) {
+        MessageBox(hWnd, L"No picture loaded", L"Erreur", MB_OK | MB_ICONERROR);
+        return;
+    }
+
+    char path[MAX_PATH] = " ";
+
+    OPENFILENAMEW ofn;
+    wchar_t szFile[MAX_PATH] = L""; // Chemin du fichier
+
+    // Initialiser la structure
+    ZeroMemory(&ofn, sizeof(ofn));
+    ofn.lStructSize = sizeof(ofn); // Taille de la structure
+    ofn.hwndOwner = NULL;          // Pas de fenêtre propriétaire
+    ofn.lpstrFilter = L"bmp\0*.bmp\0png\0*.png"; // Filtre des fichiers
+    ofn.lpstrFile = szFile;        // Chemin du fichier
+    ofn.nMaxFile = sizeof(szFile); // Taille maximale du chemin
+    ofn.lpstrTitle = L"Enregistrer le fichier"; // Titre de la boîte de dialogue
+    ofn.Flags = OFN_OVERWRITEPROMPT; // Demander confirmation pour écraser un fichier
+    ofn.lpstrFileTitle;
+    // Afficher la boîte de dialogue
+    if (GetSaveFileNameW(&ofn)) {
+        // Le fichier a été sélectionné et peut être enregistré
+        MessageBoxW(NULL, szFile, L"Fichier enregistré", MB_OK);
+    }
+    else {
+        // Gestion d'erreur, par exemple afficher un message d'erreur
+        MessageBoxW(NULL, L"Erreur lors de l'enregistrement du fichier.", L"Erreur", MB_OK | MB_ICONERROR);
+    }
+
+    const wchar_t* filter = ofn.lpstrFilter;
+    int filterIndex = ofn.nFilterIndex; // Index du filtre choisi (1 basé)
+
+    // Avancer au bon filtre
+    if (filterIndex % 2 != 0) {
+        
+    }
+    else
+    {
+        filterIndex++;
+    }
+
+    for (int i = 1; i < filterIndex; i++) {
+        while (*filter) {
+            filter++; // Avancer jusqu'à la fin du nom du filtre
+        }
+        filter++; // Passer le caractère NULL
+    }
+
+    std::wstring PathFile = szFile;
+    std::wstring PathFormat = filter;
+
+    std::wstring Path;
+
+    if(PathFile.length() > 4) {
+    
+        if (PathFile == ((PathFile.substr(0, PathFile.size() - 4)) + (L"." + PathFormat)))
+        {
+            Path = szFile;
+        }
+        else
+        {
+            Path = PathFile + L"." + PathFormat;
+        }
+
+    }
+    else
+    {
+
+    }
+
+    std::wstring ImageFormatPrefix = L"image/";
+
+    std::wstring Format = ImageFormatPrefix + PathFormat;
+
+
+    CLSID clsid;
+    CLSIDEncoder::GetEncoderClsid(Format.c_str(), &clsid);
+    bmp->Save(Path.c_str(), &clsid, NULL);
 }
 
 void WriteLog(HWND hwnd)
@@ -366,18 +445,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
     //Background à gauche de l'écran
 
-        l_background = CreateWindowA("Static", " ", WS_TABSTOP | WS_VISIBLE | WS_CHILD | WS_BORDER, 20, 250, 550, 400, hWnd, NULL, NULL, NULL);
+        l_background = CreateWindowA("Static", " ", WS_TABSTOP | WS_VISIBLE | WS_CHILD | WS_BORDER, 80, 120, 550, 400, hWnd, NULL, NULL, NULL);
 
         //Texte du message caché à gauche de l'écran
-        l_text = CreateWindowA("Static", "Message de l'image: ", WS_TABSTOP | WS_VISIBLE | WS_CHILD | WS_BORDER, 20, 60, 550, 40, hWnd, NULL, NULL, NULL);
+        l_text = CreateWindowA("Static", "Log", WS_TABSTOP | WS_VISIBLE | WS_CHILD | WS_BORDER, 750, 120, 600, 400, hWnd, NULL, NULL, NULL);
 
         //Log à droite de l'écran
         HWND log = NULL;
 
-        l_text = CreateWindowA("Static", "LOG", WS_TABSTOP | WS_VISIBLE | WS_CHILD | WS_BORDER | WS_VSCROLL, 850, 150, 550, 380, hWnd, NULL, NULL, NULL);
+        l_text = CreateWindowA("Static", "Message de l'image", WS_TABSTOP | WS_VISIBLE | WS_CHILD | WS_BORDER | WS_VSCROLL, 80, 540, 400, 80, hWnd, NULL, NULL, NULL);
 
         //Boîte de texte qu'on peut éditer
-        entry = CreateWindowA("Edit", "Saisissez votre message ici", WS_TABSTOP | WS_VISIBLE | WS_CHILD | WS_BORDER, 850, 580, 360, 80, hWnd, NULL, NULL, NULL);
+        entry = CreateWindowA("Edit", "Saisissez votre message ici", WS_TABSTOP | WS_VISIBLE | WS_CHILD | WS_BORDER, 750, 550, 360, 80, hWnd, NULL, NULL, NULL);
 
         //Ajouts de boutons
         AddButtons(hWnd);
@@ -406,11 +485,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
                 ////////////////////////////////
 
-            case IDM_ABOUT:
-                DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
-
+            //Heimanu
+            //Raccourcis et boutons de la barre
+            case ID_FICHIER_IMPORTERUNFICHIER: //ALT + V: Import d'un fichier
+                OpenFile(hWnd);
                 break;
-            case IDM_EXIT:
+
+            case ID_FICHIER_EXPORTERUNFICHIER: //ALT + B: Export d'un fichier
+                Export(hWnd);
+                break;
+
+
+            case IDM_ABOUT: //ALT + /: Informations à propos du programme
+                DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
+                break;
+
+            case IDM_EXIT: //ALT + F4: Fin du programme
                 DestroyWindow(hWnd);
 
                 break;

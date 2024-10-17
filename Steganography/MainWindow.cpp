@@ -66,10 +66,10 @@ void MainWindow::RegisterForEvents()
 
 LRESULT MainWindow::HandleCreateEvent(EventParams params)
 {
-	m_imageZone = CreateWindowA("Static", " ", WS_TABSTOP | WS_VISIBLE | WS_CHILD | WS_BORDER, 20, 250, 550, 400, params.hWnd, NULL, NULL, NULL);
-	m_logWidowElement = CreateWindowA("Static", "Message de l'image: ", WS_TABSTOP | WS_VISIBLE | WS_CHILD | WS_BORDER, 20, 60, 550, 40, params.hWnd, NULL, NULL, NULL);
-	m_messageDisplayElement = CreateWindowA("Static", "LOG", WS_TABSTOP | WS_VISIBLE | WS_CHILD | WS_BORDER | WS_VSCROLL, 850, 150, 550, 380, params.hWnd, NULL, NULL, NULL);
-	m_messageInputField = CreateWindowA("Edit", "Saisissez votre message ici", WS_TABSTOP | WS_VISIBLE | WS_CHILD | WS_BORDER, 850, 580, 360, 80, params.hWnd, NULL, NULL, NULL);
+	m_imageZone = CreateWindowA("Static", " ", WS_TABSTOP | WS_VISIBLE | WS_CHILD | WS_BORDER, 80, 120, 550, 400, params.hWnd, NULL, NULL, NULL);
+	m_messageDisplayElement = CreateWindowA("Edit", "Message de l'image: ", WS_TABSTOP | WS_VISIBLE | WS_CHILD | WS_BORDER | ES_MULTILINE | ES_AUTOVSCROLL | WS_VSCROLL | ES_READONLY, 80, 540, 400, 80, params.hWnd, NULL, NULL, NULL);
+    m_logWidowElement = CreateWindowA("Static", "LOG", WS_TABSTOP | WS_VISIBLE | WS_CHILD | WS_BORDER | WS_VSCROLL | ES_AUTOHSCROLL, 750, 120, 600, 400, params.hWnd, NULL, NULL, NULL);
+	m_messageInputField = CreateWindowA("Edit", "Saisissez votre message ici", WS_TABSTOP | WS_VISIBLE | WS_CHILD | WS_BORDER | ES_MULTILINE | ES_AUTOVSCROLL | WS_VSCROLL, 750, 550, 360, 80, params.hWnd, NULL, NULL, NULL);
 
 	AddButtons(params.hWnd);
     return DefWindowProc(params.hWnd, params.message, params.wParam, params.lParam);
@@ -96,6 +96,13 @@ LRESULT MainWindow::HandleCommandEvent(EventParams params)
         ExtractMessage(params.hWnd);
         break;
 
+    case ID_FICHIER_IMPORTERUNFICHIER: //ALT + V: Import d'un fichier
+        OpenFile(params.hWnd);
+        break;
+
+    case ID_FICHIER_EXPORTERUNFICHIER: //ALT + B: Export d'un fichier
+        Export(params.hWnd);
+        break;
         ////////////////////////////////
 
     case IDM_ABOUT:
@@ -143,7 +150,7 @@ LRESULT MainWindow::HandleDestroyEvent(EventParams params)
 void MainWindow::AddButtons(HWND hwnd)
 {
     //Tableau des boutons de l'interface
-    HWND buttons[3];
+    HWND buttons[4];
 
     //Struct pour les paramètres du bouton
     struct buttonsetup
@@ -156,12 +163,13 @@ void MainWindow::AddButtons(HWND hwnd)
         int buttonnum = 0; /*Numéro du bouton*/
     };
 
-    buttonsetup buttonmap[3];
-    buttonmap[0] = { 180, 180, 180, 40, "Charger un fichier bitmap", OPEN_FILE_BUTTON }; /*Charger un fichier bitmap*/
-    buttonmap[1] = { 1250, 580, 150, 40, "Cacher le message", HIDE_MESSAGE_BUTTON }; /*Cacher le message*/
-    buttonmap[2] = { 600, 600, 150, 40, "Extraire le message", EXTRACT_MESSAGE_BUTTON }; /*Extraire le message*/
+    buttonsetup buttonmap[4];
+    buttonmap[0] = { 80, 10, 250, 40, "Importer un fichier", ID_FICHIER_IMPORTERUNFICHIER }; /*Charger un fichier bitmap*/
+    buttonmap[1] = { 1125, 560, 210, 40, "Cacher et exporter le message", HIDE_MESSAGE_BUTTON }; /*Cacher le message*/
+    buttonmap[2] = { 500, 560, 150, 40, "Extraire le message", EXTRACT_MESSAGE_BUTTON }; /*Extraire le message*/
+    buttonmap[3] = { 80, 60, 250, 40, "Exporter un fichier", ID_FICHIER_EXPORTERUNFICHIER };
 
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < 4; i++)
     {
 
         buttons[i] = CreateWindowA("Button", buttonmap[i].title, WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON , buttonmap[i].s_x, buttonmap[i].s_y, buttonmap[i].s_width, buttonmap[i].s_height, hwnd, (HMENU)buttonmap[i].buttonnum, NULL, NULL);
@@ -255,6 +263,91 @@ int MainWindow::OpenFile(HWND hWnd)
     }
 
     return 0;
+}
+
+void MainWindow::Export(HWND hWnd)
+{
+    Bitmap* bmp = m_imgLoader->GetPictureToDisplay();
+
+    if (bmp == nullptr) {
+        MessageBox(hWnd, L"No picture loaded", L"Erreur", MB_OK | MB_ICONERROR);
+        return;
+    }
+
+    char path[MAX_PATH] = " ";
+
+    OPENFILENAMEW ofn;
+    wchar_t szFile[MAX_PATH] = L""; // Chemin du fichier
+
+    // Initialiser la structure
+    ZeroMemory(&ofn, sizeof(ofn));
+    ofn.lStructSize = sizeof(ofn); // Taille de la structure
+    ofn.hwndOwner = NULL;          // Pas de fenêtre propriétaire
+    ofn.lpstrFilter = L"bmp\0*.bmp\0png\0*.png"; // Filtre des fichiers
+    ofn.lpstrFile = szFile;        // Chemin du fichier
+    ofn.nMaxFile = sizeof(szFile); // Taille maximale du chemin
+    ofn.lpstrTitle = L"Enregistrer le fichier"; // Titre de la boîte de dialogue
+    ofn.Flags = OFN_OVERWRITEPROMPT; // Demander confirmation pour écraser un fichier
+    ofn.lpstrFileTitle;
+    // Afficher la boîte de dialogue
+    if (GetSaveFileNameW(&ofn)) {
+        // Le fichier a été sélectionné et peut être enregistré
+        MessageBoxW(NULL, szFile, L"Fichier enregistré", MB_OK);
+    }
+    else {
+        // Gestion d'erreur, par exemple afficher un message d'erreur
+        MessageBoxW(NULL, L"Erreur lors de l'enregistrement du fichier.", L"Erreur", MB_OK | MB_ICONERROR);
+    }
+
+    const wchar_t* filter = ofn.lpstrFilter;
+    int filterIndex = ofn.nFilterIndex; // Index du filtre choisi (1 basé)
+
+    // Avancer au bon filtre
+    if (filterIndex % 2 != 0) {
+
+    }
+    else
+    {
+        filterIndex++;
+    }
+
+    for (int i = 1; i < filterIndex; i++) {
+        while (*filter) {
+            filter++; // Avancer jusqu'à la fin du nom du filtre
+        }
+        filter++; // Passer le caractère NULL
+    }
+
+    std::wstring PathFile = szFile;
+    std::wstring PathFormat = filter;
+
+    std::wstring Path;
+
+    if (PathFile.length() > 4) {
+
+        if (PathFile == ((PathFile.substr(0, PathFile.size() - 4)) + (L"." + PathFormat)))
+        {
+            Path = szFile;
+        }
+        else
+        {
+            Path = PathFile + L"." + PathFormat;
+        }
+
+    }
+    else
+    {
+
+    }
+
+    std::wstring ImageFormatPrefix = L"image/";
+
+    std::wstring Format = ImageFormatPrefix + PathFormat;
+
+
+    CLSID clsid;
+    CLSIDEncoder::GetEncoderClsid(Format.c_str(), &clsid);
+    bmp->Save(Path.c_str(), &clsid, NULL);
 }
 
 void MainWindow::HideMessage(HWND hWnd)
