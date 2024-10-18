@@ -352,7 +352,9 @@ void MainWindow::Export(HWND hWnd)
 
 void MainWindow::HideMessage(HWND hWnd)
 {
-    Bitmap* bmp = m_imgLoader->GetPictureToDisplay();
+    Bitmap* bmp = m_filterSystem->GetFilteredBitmap();
+
+    //Bitmap* bmp = m_imgLoader->GetPictureToDisplay();
     if (bmp == nullptr)
     {
         MessageBox(hWnd, L"No picture loaded", L"Erreur", MB_OK | MB_ICONERROR);
